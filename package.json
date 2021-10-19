@@ -1,20 +1,20 @@
 {
-  "name": "@gmod/gff",
-  "version": "1.1.2",
-  "description": "read and write GFF3 data as streams",
+  "name": "@gmod/gtf",
+  "version": "0.0.1",
+  "description": "read and write GTF data as streams",
   "license": "MIT",
-  "repository": "GMOD/gff-js",
+  "repository": "teresam856/gtf-js",
   "main": "dist/index.js",
   "author": {
-    "name": "Robert Buels",
+    "name": "Teresa Martinez, Robert Buels",
     "email": "rbuels@gmail.com",
-    "url": "https://github.com/rbuels"
+    "url": "https://github.com/teresam856"
   },
   "engines": {
     "node": ">=6"
   },
   "bin": {
-    "gff-to-json": "dist/gff-to-json.js"
+    "gtf-to-json": "dist/gtf-to-json.js"
   },
   "directories": {
     "lib": "dist"
@@ -48,7 +48,7 @@
   "keywords": [
     "bionode",
     "biojs",
-    "gff3",
+    "gtf",
     "gff",
     "genomics"
   ],
