@@ -6,10 +6,18 @@
   "repository": "teresam856/gtf-js",
   "main": "dist/index.js",
   "author": {
-    "name": "Teresa Martinez, Robert Buels",
+    "name": "Robert Buels",
     "email": "rbuels@gmail.com",
-    "url": "https://github.com/teresam856"
+    "url": "https://github.com/rbuels"
   },
+  "contributors": [
+    {
+      "name": "Teresa De Jesus Martinez",
+      "email": "tere486martinez@gmail.com",
+      "url": "https://github.com/teresam856"
+
+    }
+  ],
   "engines": {
     "node": ">=6"
   },
