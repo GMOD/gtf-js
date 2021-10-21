@@ -1,7 +1,6 @@
 /** @module util */
 
-// Fast, low-level functions for parsing and formatting GFF3.
-// JavaScript port of Robert Buels's Bio::GFF3::LowLevel Perl module.
+// Forks @gmod/gff-js and adapts it to parse and format GTF.
 
 import typical from 'typical'
 
@@ -17,22 +16,26 @@ const fieldNames = [
   'attributes',
 ]
 
+// TODO: check about enconding/escaping in gtf 9th column
 /**
- * Unescape a string value used in a GFF3 attribute.
+ * Unescape a string/text value used in a GTF attribute.
+ * Textual attributes should be surrounded by double quotes
+ * source info:
+ * https://mblab.wustl.edu/GTF22.html
+ * https://en.wikipedia.org/wiki/Gene_transfer_format
  *
  * @param {String} s
  * @returns {String}
  */
 export function unescape(s) {
   if (s === null) return null
-
   return String(s).replace(/%([0-9A-Fa-f]{2})/g, (match, seq) =>
     String.fromCharCode(parseInt(seq, 16)),
   )
 }
 
 /**
- * Escape a value for use in a GFF3 attribute value.
+ * Escape a value for use in a GTF attribute value.
  *
  * @param {String} s
  * @returns {String}
@@ -51,6 +54,7 @@ function _escape(regex, s) {
 }
 
 export function escape(s) {
+  // eslint-disable-next-line no-control-regex
   return _escape(/[\n;\r\t=%&,\x00-\x1f\x7f-\xff]/g, s)
 }
 
@@ -61,11 +65,12 @@ export function escape(s) {
  * @returns {String}
  */
 export function escapeColumn(s) {
+  // eslint-disable-next-line no-control-regex
   return _escape(/[\n\r\t%\x00-\x1f\x7f-\xff]/g, s)
 }
 
 /**
- * Parse the 9th column (attributes) of a GFF3 feature line.
+ * Parse the 9th column (attributes) of a GTF feature line.
  *
  * @param {String} attrString
  * @returns {Object}
@@ -77,32 +82,32 @@ export function parseAttributes(attrString) {
 
   attrString
     .replace(/\r?\n$/, '')
+    .slice(0, -1) // need to remove the last semicolon in the attributes
     .split(';')
-    .forEach(a => {
-      const nv = a.split('=', 2)
-      if (!(nv[1] && nv[1].length)) return
+    .forEach(attribute => {
+      if (!attribute) return
+      const attr = attribute.trim().split(' ')
+      if (!(attr[1] && attr[1].length)) return
 
-      nv[0] = nv[0].trim()
-      let arec = attrs[nv[0].trim()]
+      attr[0] = attr[0].trim()
+      let arec = attrs[attr[0].trim()]
       if (!arec) {
         arec = []
-        attrs[nv[0]] = arec
+        attrs[attr[0]] = arec
       }
 
-      arec.push(
-        ...nv[1]
-          .split(',')
-          .map(s => s.trim())
-          .map(unescape),
-      )
+      // need to remove double quotes
+      arec.push(unescape(attr[1].trim()).replace(/["]+/g, ''))
+      // arec.push(attr[1].trim().replace(/["]+/g, ''))
     })
   return attrs
 }
 
 /**
- * Parse a GFF3 feature line
+ * Parse a GTF feature line.
  *
  * @param {String} line
+ * returns the parsed line in an object
  */
 export function parseFeature(line) {
   // split the line into columns and replace '.' with null in each column
@@ -135,6 +140,7 @@ export function parseDirective(line) {
   const match = /^\s*##\s*(\S+)\s*(.*)/.exec(line)
   if (!match) return null
 
+  // eslint-disable-next-line prefer-const
   let [, name, contents] = match
 
   const parsed = { directive: name }
@@ -146,6 +152,7 @@ export function parseDirective(line) {
   // do a little additional parsing for sequence-region and genome-build directives
   if (name === 'sequence-region') {
     const c = contents.split(/\s+/, 3)
+    // eslint-disable-next-line prefer-destructuring
     parsed.seq_id = c[0]
     parsed.start = c[1] && c[1].replace(/\D/g, '')
     parsed.end = c[2] && c[2].replace(/\D/g, '')
@@ -157,7 +164,7 @@ export function parseDirective(line) {
 }
 
 /**
- * Format an attributes object into a string suitable for the 9th column of GFF3.
+ * Format an attributes object into a string suitable for the 9th column of GTF.
  *
  * @param {Object} attrs
  */
@@ -166,6 +173,7 @@ export function formatAttributes(attrs) {
   Object.keys(attrs).forEach(tag => {
     const val = attrs[tag]
     let valstring
+    // eslint-disable-next-line no-prototype-builtins
     if (val.hasOwnProperty('toString')) {
       valstring = escape(val.toString())
     } else if (Array.isArray(val.values)) {
@@ -175,9 +183,9 @@ export function formatAttributes(attrs) {
     } else {
       valstring = escape(val)
     }
-    attrOrder.push(`${escape(tag)}=${valstring}`)
+    attrOrder.push(`${escape(tag)} ${valstring}`)
   })
-  return attrOrder.length ? attrOrder.join(';') : '.'
+  return attrOrder.length ? attrOrder.join('; ').concat(';') : '.'
 }
 
 const translateStrand = ['-', '.', '+']
@@ -210,6 +218,7 @@ function _formatSingleFeature(f, seenFeature) {
     return ''
   }
 
+  // eslint-disable-next-line no-param-reassign
   seenFeature[formattedString] = true
   return formattedString
 }

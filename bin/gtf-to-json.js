@@ -1,10 +1,10 @@
-const gff = require('../dist').default
+import gtf from '../dist'
 
 let itemBuffer
 
 process.stdout.write('[\n')
 process.stdin
-  .pipe(gff.parseStream({ parseAll: true }))
+  .pipe(gtf.parseStream({ parseAll: true }))
   .on('data', item => {
     itemBuffer = JSON.stringify(item)
     if (itemBuffer) {
@@ -13,6 +13,7 @@ process.stdin
     }
   })
   .on('error', err => {
+    // eslint-disable-next-line no-console
     console.error(err)
     process.exit(1)
   })

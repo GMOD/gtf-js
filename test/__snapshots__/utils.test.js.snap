@@ -1,0 +1,25 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`GTF utils test parsing a gtf feature 1`] = `
+Object {
+  "attributes": Object {
+    "gene_id": Array [
+      "EDEN",
+    ],
+    "gene_name": Array [
+      "EDEN",
+    ],
+    "transcript_id": Array [
+      "EDEN.3",
+    ],
+  },
+  "end": 3902,
+  "phase": "0",
+  "score": null,
+  "seq_id": "ctgA",
+  "source": "example",
+  "start": 3301,
+  "strand": "+",
+  "type": "CDS",
+}
+`;

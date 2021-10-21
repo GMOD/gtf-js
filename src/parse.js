@@ -1,4 +1,4 @@
-import * as GFF3 from './util'
+import * as GTF from './util'
 
 const containerAttributes = {
   Parent: 'child_features',
@@ -94,13 +94,14 @@ export default class Parser {
     const match = /^\s*(#+)(.*)/.exec(line)
     if (match) {
       // directive or comment
+      // eslint-disable-next-line prefer-const
       let [, hashsigns, contents] = match
 
       if (hashsigns.length === 3) {
         // sync directive, all forward-references are resolved.
         this._emitAllUnderConstructionFeatures()
       } else if (hashsigns.length === 2) {
-        const directive = GFF3.parseDirective(line)
+        const directive = GTF.parseDirective(line)
         if (directive.directive === 'FASTA') {
           this._emitAllUnderConstructionFeatures()
           this.eof = true
@@ -200,7 +201,7 @@ export default class Parser {
 
   // do the right thing with a newly-parsed feature line
   _bufferLine(line) {
-    const featureLine = GFF3.parseFeature(line)
+    const featureLine = GTF.parseFeature(line)
     featureLine.child_features = []
     featureLine.derived_features = []
     // featureLine._lineNumber = this.lineNumber //< debugging aid
@@ -282,6 +283,7 @@ export default class Parser {
       let subObj = obj[slot1]
       if (!subObj) {
         subObj = {}
+        // eslint-disable-next-line no-param-reassign
         obj[slot1] = subObj
       }
       const returnVal = subObj[slot2] || false

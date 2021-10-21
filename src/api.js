@@ -5,6 +5,7 @@ const { Transform } = require('stream')
 const Decoder = require('string_decoder').StringDecoder
 
 // don't load fs native module if running in webpacked code
+// eslint-disable-next-line camelcase
 const fs = typeof __webpack_require__ !== 'function' ? require('fs') : null
 
 // call a callback on the next process tick if running in
