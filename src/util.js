@@ -5,14 +5,14 @@
 import typical from 'typical'
 
 const fieldNames = [
-  'seq_id',
+  'seq_name',
   'source',
-  'type',
+  'feature',
   'start',
   'end',
   'score',
   'strand',
-  'phase',
+  'frame',
   'attributes',
 ]
 
@@ -59,7 +59,7 @@ export function escape(s) {
 }
 
 /**
- * Escape a value for use in a GFF3 column value.
+ * Escape a value for use in a GTF column value.
  *
  * @param {String} s
  * @returns {String}
@@ -110,10 +110,11 @@ export function parseAttributes(attrString) {
  * returns the parsed line in an object
  */
 export function parseFeature(line) {
+  // assummed that there are no comments at the end of a line
   // split the line into columns and replace '.' with null in each column
   const f = line.split('\t').map(a => (a === '.' ? null : a))
 
-  // unescape only the ref, source, and type columns
+  // unescape only the seq_name, source, and feature columns
   f[0] = unescape(f[0])
   f[1] = unescape(f[1])
   f[2] = unescape(f[2])
@@ -131,13 +132,14 @@ export function parseFeature(line) {
 }
 
 /**
- * Parse a GFF3 directive line.
+ * Parse a GFF3 directive/comment line.
  *
  * @param {String} line
  * @returns {Object} the information in the directive
  */
 export function parseDirective(line) {
-  const match = /^\s*##\s*(\S+)\s*(.*)/.exec(line)
+  const match = /^\s*#\s*(\S+)\s*(.*)/.exec(line)
+  // const match = /^\s*\#\#\s*(\S+)\s*(.*)/.exec(line)
   if (!match) return null
 
   // eslint-disable-next-line prefer-const
@@ -200,14 +202,15 @@ function _formatSingleFeature(f, seenFeature) {
   for (let i = 0; i < 8; i += 1) {
     const val = f[fieldNames[i]]
     // deserialize strand
-    if (i === 6)
+    if (i === 6) {
       fields[i] =
         val === null || val === undefined
           ? '.'
           : translateStrand[val + 1] || val
-    else
+    } else {
       fields[i] =
         val === null || val === undefined ? '.' : escapeColumn(String(val))
+    }
   }
   fields[8] = attrString
 
@@ -241,7 +244,7 @@ function _formatFeature(feature, seenFeature) {
 
 /**
  * Format a feature object or array of
- * feature objects into one or more lines of GFF3.
+ * feature objects into one or more lines of GTF.
  *
  * @param {Object|Array[Object]} featureOrFeatures
  */

@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`GTF utils test parsing a gtf feature 1`] = `
+exports[`GTF utils test parsing/formating a gtf feature 1`] = `
 Object {
   "attributes": Object {
     "gene_id": Array [
@@ -14,12 +14,12 @@ Object {
     ],
   },
   "end": 3902,
-  "phase": "0",
+  "feature": "CDS",
+  "frame": "0",
   "score": null,
-  "seq_id": "ctgA",
+  "seq_name": "ctgA",
   "source": "example",
   "start": 3301,
   "strand": "+",
-  "type": "CDS",
 }
 `;
