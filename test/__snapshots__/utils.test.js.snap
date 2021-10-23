@@ -14,7 +14,7 @@ Object {
     ],
   },
   "end": 3902,
-  "feature": "CDS",
+  "featureType": "CDS",
   "frame": "0",
   "score": null,
   "seq_name": "ctgA",

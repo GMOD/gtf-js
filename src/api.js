@@ -38,7 +38,7 @@ function _processParseOptions(options, additionalDefaults = {}) {
   return out
 }
 
-class GFFTransform extends Transform {
+class GTFTransform extends Transform {
   constructor(inputOptions = {}) {
     const options = _processParseOptions(inputOptions)
     super({ objectMode: true })
@@ -96,22 +96,22 @@ class GFFTransform extends Transform {
  * directive, and comment objects.
  *
  * @param {Object} options optional options object
- * @param {string} options.encoding text encoding of the input GFF3. default 'utf8'
+ * @param {string} options.encoding text encoding of the input GTF. default 'utf8'
  * @param {boolean} options.parseAll default false.  if true, will parse all items. overrides other flags
  * @param {boolean} options.parseFeatures default true
  * @param {boolean} options.parseDirectives default false
  * @param {boolean} options.parseComments default false
  * @param {boolean} options.parseSequences default true
- * @param {Number} options.bufferSize maximum number of GFF3 lines to buffer. defaults to 1000
+ * @param {Number} options.bufferSize maximum number of GTF lines to buffer. defaults to 1000
  * @returns {ReadableStream} stream (in objectMode) of parsed items
  */
 export function parseStream(options = {}) {
   const newOptions = Object.assign({ bufferSize: 1000 }, options)
-  return new GFFTransform(newOptions)
+  return new GTFTransform(newOptions)
 }
 
 /**
- * Read and parse a GFF3 file from the filesystem.
+ * Read and parse a GTF file from the filesystem.
  *
  * @param {string} filename the filename of the file to parse
  * @param {Object} options optional options object
@@ -121,7 +121,7 @@ export function parseStream(options = {}) {
  * @param {boolean} options.parseDirectives default false
  * @param {boolean} options.parseComments default false
  * @param {boolean} options.parseSequences default true
- * @param {Number} options.bufferSize maximum number of GFF3 lines to buffer. defaults to 1000
+ * @param {Number} options.bufferSize maximum number of GTF lines to buffer. defaults to 1000
  * @returns {ReadableStream} stream (in objectMode) of parsed items
  */
 export function parseFile(filename, options) {
@@ -129,7 +129,7 @@ export function parseFile(filename, options) {
 }
 
 /**
- * Synchronously parse a string containing GFF3 and return
+ * Synchronously parse a string containing GTF and return
  * an arrayref of the parsed items.
  *
  * @param {string} str
@@ -167,7 +167,7 @@ export function parseStringSync(str, inputOptions = {}) {
 }
 
 /**
- * Format an array of GFF3 items (features,directives,comments) into string of GFF3.
+ * Format an array of GTF items (features,directives,comments) into string of GTF.
  * Does not insert synchronization (###) marks.
  *
  * @param {Array[Object]} items
@@ -208,7 +208,7 @@ class FormattingTransform extends Transform {
       this.insertVersionDirective &&
       (chunk[0] || chunk).directive !== 'gff-version'
     )
-      this.push('##gff-version 3\n')
+      this.push('##gff-version 2\n')
 
     // if it's a sequence chunk coming down, emit a FASTA directive and
     // change to FASTA mode
@@ -241,14 +241,14 @@ class FormattingTransform extends Transform {
 
 /**
  * Format a stream of items (of the type produced
- * by this script) into a stream of GFF3 text.
+ * by this script) into a stream of GTF text.
  *
  * Inserts synchronization (###) marks automatically.
  *
  * @param {Object} options
  * @param {Object} options.minSyncLines minimum number of lines between ### marks. default 100
  * @param {Boolean} options.insertVersionDirective
- *  if the first item in the stream is not a ##gff-version directive, insert one.
+ *  if the first item in the stream is not a ##gff-version directive, insert one to show it's gtf
  *  default false
  */
 export function formatStream(options) {
@@ -257,7 +257,7 @@ export function formatStream(options) {
 
 /**
  * Format a stream of items (of the type produced
- * by this script) into a GFF3 file and write it to the filesystem.
+ * by this script) into a GTF file and write it to the filesystem.
 
  * Inserts synchronization (###) marks and a ##gff-version
  * directive automatically (if one is not already present).

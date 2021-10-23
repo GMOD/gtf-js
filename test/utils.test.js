@@ -32,7 +32,7 @@ describe('GTF utils', () => {
     const featureToFormat = {
       seq_name: 'ctgA',
       source: 'example',
-      feature: 'CDS',
+      featureType: 'CDS',
       start: 3301,
       end: 3902,
       score: null,

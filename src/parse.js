@@ -207,9 +207,12 @@ export default class Parser {
     // featureLine._lineNumber = this.lineNumber //< debugging aid
 
     // NOTE: a feature is an arrayref of one or more feature lines.
-    const ids = featureLine.attributes.ID || []
-    const parents = featureLine.attributes.Parent || []
-    const derives = featureLine.attributes.Derives_from || []
+    // const ids = featureLine.attributes.ID || []
+    const ids = []
+    // const parents = featureLine.attributes.Parent || []
+    const parents = []
+    // const derives = featureLine.attributes.Derives_from || []
+    const derives = []
 
     if (!ids.length && !parents.length && !derives.length) {
       // if it has no IDs and does not refer to anything, we can just
@@ -223,9 +226,13 @@ export default class Parser {
       const existing = this._underConstructionById[id]
       if (existing) {
         // another location of the same feature
-        if (existing[existing.length - 1].type !== featureLine.type) {
+        if (
+          existing[existing.length - 1].featureType !== featureLine.featureType
+        ) {
           this._parseError(
-            `multi-line feature "${id}" has inconsistent types: "${featureLine.type}", "${existing[existing.length - 1].type}"`,
+            `multi-line feature "${id}" has inconsistent feature type: "${
+              featureLine.featureType
+            }", "${existing[existing.length - 1].featureType}"`,
           )
         }
         existing.push(featureLine)

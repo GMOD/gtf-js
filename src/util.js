@@ -7,7 +7,7 @@ import typical from 'typical'
 const fieldNames = [
   'seq_name',
   'source',
-  'feature',
+  'featureType',
   'start',
   'end',
   'score',

@@ -1,49 +1,66 @@
-// import fs from 'fs'
-// import tmp from 'tmp-promise'
+import fs from 'fs'
+import tmp from 'tmp-promise'
 
-// import { promisify } from 'es6-promisify'
-// import getStream from 'get-stream'
+import { promisify } from 'es6-promisify'
+import getStream from 'get-stream'
 
-// import gff from '../src'
+import gtf from '../src'
 
-// const readfile = promisify(fs.readFile)
-// const fdatasync = promisify(fs.fdatasync)
+const readfile = promisify(fs.readFile)
+const fdatasync = promisify(fs.fdatasync)
 
 describe('GTF formatting', () => {
   it(`can roundtrip a gtf file with formatSync`, () => {
-    // const inputGFF3 = fs
-    //   .readFileSync(require.resolve(`./data/${file}.gff3`))
-    //   .toString('utf8')
+    const inputGTF = fs
+      .readFileSync(require.resolve(`./data/hybrid.gtf`))
+      .toString('utf8')
 
-    // const expectedGFF3 = fs
-    //   .readFileSync(require.resolve(`./data/${file}.reformatted.gff3`))
-    //   .toString('utf8')
-    //   .replace(/###\n/g, '') // formatSync does not insert sync marks
+    const expectedGTF = fs
+      .readFileSync(require.resolve(`./data/hybrid.reformatted.gtf`))
+      .toString('utf8')
+      .replace(/###\n/g, '') // formatSync does not insert sync marks
 
-    // const items = gff.parseStringSync(inputGFF3, { parseAll: true })
-    // const resultGFF3 = gff.formatSync(items)
-    // expect(resultGFF3).toEqual(expectedGFF3)
-    expect(true).toEqual(true)
+    const items = gtf.parseStringSync(inputGTF, { parseAll: true })
+    const resultGTF = gtf.formatSync(items)
+    expect(resultGTF).toEqual(expectedGTF)
   })
 
   it(`can roundtrip  a gtf file with formatStream`, async () => {
-    // const expectedGFF3 = (await readfile(
-    //   require.resolve(`./data/${file}.reformatted.gff3`),
-    // )).toString('utf8')
+    const expectedGTF = (
+      await readfile(require.resolve(`./data/hybrid.reformatted.gtf`))
+    ).toString('utf8')
 
-    // const resultGFF3 = await getStream(
-    //   fs
-    //     .createReadStream(require.resolve(`./data/${file}.gff3`))
-    //     .pipe(
-    //       gff.parseStream({
-    //         parseFeatures: true,
-    //         parseComments: true,
-    //         parseDirectives: true,
-    //       }),
-    //     )
-    //     .pipe(gff.formatStream()),
-    // )
-    // expect(resultGFF3).toEqual(expectedGFF3)
-    expect(true).toEqual(true)
+    const resultGTF = await getStream(
+      fs
+        .createReadStream(require.resolve(`./data/hybrid.gtf`))
+        .pipe(
+          gtf.parseStream({
+            parseFeatures: true,
+            parseComments: true,
+            parseDirectives: true,
+          }),
+        )
+        .pipe(gtf.formatStream()),
+    )
+    expect(resultGTF).toEqual(expectedGTF)
+  })
+  it(`can roundtrip gtf with formatFile`, async () => {
+    jest.setTimeout(1000)
+    await tmp.withFile(async tmpFile => {
+      const gtfIn = fs
+        .createReadStream(require.resolve(`./data/demo2.gtf`))
+        .pipe(gtf.parseStream({ parseAll: true }))
+
+      await gtf.formatFile(gtfIn, tmpFile.path)
+      await fdatasync(tmpFile.fd)
+
+      const resultGTF = (await readfile(tmpFile.path)).toString('utf8')
+
+      const expectedGTF = (
+        await readfile(require.resolve(`./data/demo2.reformatted.gtf`))
+      ).toString('utf8')
+
+      expect(resultGTF).toEqual(expectedGTF)
+    })
   })
 })
