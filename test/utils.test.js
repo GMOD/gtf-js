@@ -4,6 +4,7 @@ const {
   parseAttributes,
   parseFeature,
   parseDirective,
+  formatFeature,
   formatItem,
   formatAttributes,
   escapeColumn,
@@ -20,6 +21,27 @@ describe('GTF utils', () => {
       'ctgA	example	CDS	3301	3902	.	+	0	transcript_id "EDEN.3"; gene_id "EDEN"; gene_name "EDEN";'
     const parsedFeature = parseFeature(featureLine)
     expect(parsedFeature).toMatchSnapshot()
+    const featureItem = {
+      attributes: {
+        transcript_id: ['"EDEN.3"'],
+        gene_id: ['"EDEN"'],
+        gene_name: ['"EDEN"'],
+      },
+      end: 3902,
+      featureType: 'CDS',
+      frame: '0',
+      score: null,
+      seq_name: 'ctgA',
+      source: 'example',
+      start: 3301,
+      strand: '+',
+    }
+    expect(formatFeature(featureItem)).toEqual(
+      'ctgA	example	CDS	3301	3902	.	+	0	transcript_id "EDEN.3"; gene_id "EDEN"; gene_name "EDEN";\n',
+    )
+    expect(formatItem(featureItem)).toBe(
+      'ctgA	example	CDS	3301	3902	.	+	0	transcript_id "EDEN.3"; gene_id "EDEN"; gene_name "EDEN";\n',
+    )
   })
   it('test parsing/formatting items and attributes', () => {
     const gtfComment = {
@@ -59,5 +81,9 @@ describe('GTF utils', () => {
     )
     expect(parsedGTFAttributes).toMatchSnapshot()
     expect(formatAttributes(gtfAttributes)).toMatchSnapshot()
+    // invalid item
+    expect(formatItem({ test: 'test' })).toEqual(
+      '# (invalid item found during format)\n',
+    )
   })
 })

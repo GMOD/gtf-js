@@ -32,6 +32,7 @@
   ],
   "scripts": {
     "test": "jest",
+    "test-ci": "jest --ci --coverage",
     "coverage": "npm test -- --coverage",
     "lint": "eslint src test",
     "docs": "documentation readme src --section=API",
