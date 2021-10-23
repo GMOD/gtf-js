@@ -96,9 +96,13 @@ export function parseAttributes(attrString) {
         attrs[attr[0]] = arec
       }
 
-      // need to remove double quotes
-      arec.push(unescape(attr[1].trim()).replace(/["]+/g, ''))
-      // arec.push(attr[1].trim().replace(/["]+/g, ''))
+      // arec.push(unescape(attr[1].trim()))
+      arec.push(
+        ...attr[1]
+          .split(',')
+          .map(s => s.trim())
+          .map(unescape),
+      )
     })
   return attrs
 }
@@ -297,10 +301,18 @@ export function formatSequence(seq) {
  */
 export function formatItem(itemOrItems) {
   function formatSingleItem(item) {
-    if (item[0] || item.attributes) return formatFeature(item)
-    if (item.directive) return formatDirective(item)
-    if (item.sequence) return formatSequence(item)
-    if (item.comment) return formatComment(item)
+    if (item[0] || item.attributes) {
+      return formatFeature(item)
+    }
+    if (item.directive) {
+      return formatDirective(item)
+    }
+    if (item.sequence) {
+      return formatSequence(item)
+    }
+    if (item.comment) {
+      return formatComment(item)
+    }
     return '# (invalid item found during format)\n'
   }
 

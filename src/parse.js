@@ -207,12 +207,12 @@ export default class Parser {
     // featureLine._lineNumber = this.lineNumber //< debugging aid
 
     // NOTE: a feature is an arrayref of one or more feature lines.
-    // const ids = featureLine.attributes.ID || []
-    const ids = []
-    // const parents = featureLine.attributes.Parent || []
-    const parents = []
-    // const derives = featureLine.attributes.Derives_from || []
-    const derives = []
+    const ids = featureLine.attributes.ID || []
+    // const ids = featureLine.attributes.gene_id || []
+    const parents = featureLine.attributes.Parent || []
+    // const parents = []
+    const derives = featureLine.attributes.Derives_from || []
+    // const derives = []
 
     if (!ids.length && !parents.length && !derives.length) {
       // if it has no IDs and does not refer to anything, we can just

@@ -178,8 +178,11 @@ export function formatSync(items) {
   const other = []
   const sequences = []
   items.forEach(i => {
-    if (i.sequence) sequences.push(i)
-    else other.push(i)
+    if (i.sequence) {
+      sequences.push(i)
+    } else {
+      other.push(i)
+    }
   })
   let str = other.map(formatItem).join('')
   if (sequences.length) {
@@ -217,8 +220,11 @@ class FormattingTransform extends Transform {
       this.fastaMode = true
     }
 
-    if (Array.isArray(chunk)) str = chunk.map(formatItem).join('')
-    else str = formatItem(chunk)
+    if (Array.isArray(chunk)) {
+      str = chunk.map(formatItem).join('')
+    } else {
+      str = formatItem(chunk)
+    }
 
     this.push(str)
 
