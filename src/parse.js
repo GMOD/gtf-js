@@ -4,7 +4,7 @@ const containerAttributes = {
   Parent: 'child_features',
   Derives_from: 'derived_features',
 }
-
+// Note this is a reimplementation of https://github.com/GMOD/jbrowse/src/JBrowse/Store/SeqFeature/GTF/Parser.js
 class FASTAParser {
   constructor(seqCallback) {
     this.seqCallback = seqCallback
@@ -124,19 +124,27 @@ export default class Parser {
     } else {
       // it's a parse error
       const errLine = line.replace(/\r?\n?$/g, '')
-      throw new Error(`GFF3 parse error.  Cannot parse '${errLine}'.`)
+      throw new Error(`GTF parse error.  Cannot parse '${errLine}'.`)
     }
   }
 
   _emitItem(i) {
-    if (i[0]) this.featureCallback(i)
-    else if (i.directive) this.directiveCallback(i)
-    else if (i.comment) this.commentCallback(i)
+    if (i[0]) {
+      this.featureCallback(i)
+    }
+    else if (i.directive) { 
+      this.directiveCallback(i)
+    }
+    else if (i.comment) { 
+      this.commentCallback(i)
+    }
   }
 
   finish() {
     this._emitAllUnderConstructionFeatures()
-    if (this.fastaParser) this.fastaParser.finish()
+    if (this.fastaParser) {
+      this.fastaParser.finish()
+    }
     this.endCallback()
   }
 
@@ -206,13 +214,14 @@ export default class Parser {
     featureLine.derived_features = []
     // featureLine._lineNumber = this.lineNumber //< debugging aid
 
+    const featureNumber = this.lineNumber // no such thing as unique ID in GTF. make one up.
+    const isTranscript = featureLine.featureType === 'transcript' // trying to support the Cufflinks convention of adding a transcript line
     // NOTE: a feature is an arrayref of one or more feature lines.
-    const ids = featureLine.attributes.ID || []
-    // const ids = featureLine.attributes.gene_id || []
-    const parents = featureLine.attributes.Parent || []
-    // const parents = []
+    const ids = isTranscript
+      ? featureLine.attributes.transcript_id || []
+      : [featureNumber]
+    const parents = isTranscript ? [] : featureLine.attributes.transcript_id
     const derives = featureLine.attributes.Derives_from || []
-    // const derives = []
 
     if (!ids.length && !parents.length && !derives.length) {
       // if it has no IDs and does not refer to anything, we can just
@@ -221,20 +230,24 @@ export default class Parser {
       return
     }
 
+    function createTranscript(feature) {
+      const result = JSON.parse(JSON.stringify(feature))
+      result.featureType = 'transcript'
+      // result.attributes={'transcript_id':result.attributes.transcript_id, 'gene_id':result.attributes.gene_id};
+      return GTF.formatFeature(result)
+    }
+    // here we just create transcript features with children features and let 'gene_ids' simply be attributes not a feature in themselves
+    parents.forEach(parent => {
+      const underConst = this._underConstructionById[parent]
+      if (!underConst) {
+        this._bufferLine(createTranscript(featureLine))
+      }
+    })
+
     let feature
     ids.forEach(id => {
       const existing = this._underConstructionById[id]
       if (existing) {
-        // another location of the same feature
-        if (
-          existing[existing.length - 1].featureType !== featureLine.featureType
-        ) {
-          this._parseError(
-            `multi-line feature "${id}" has inconsistent feature type: "${
-              featureLine.featureType
-            }", "${existing[existing.length - 1].featureType}"`,
-          )
-        }
         existing.push(featureLine)
         feature = existing
       } else {
@@ -298,11 +311,22 @@ export default class Parser {
       return returnVal
     }
 
+    function expandFeature(parentFeature, childFeature) {
+      // eslint-disable-next-line no-param-reassign
+      parentFeature[0].start = Math.min(
+        parentFeature[0].start,
+        childFeature[0].start,
+      )
+      // eslint-disable-next-line no-param-reassign
+      parentFeature[0].end = Math.max(parentFeature[0].end, childFeature[0].end)
+    }
+
     Object.entries(references).forEach(([attrname, toIds]) => {
       let pname
       toIds.forEach(toId => {
         const otherFeature = this._underConstructionById[toId]
         if (otherFeature) {
+          expandFeature(otherFeature, feature)
           if (!pname)
             pname = containerAttributes[attrname] || attrname.toLowerCase()
 
