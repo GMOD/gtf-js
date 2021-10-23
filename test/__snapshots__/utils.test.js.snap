@@ -4,13 +4,13 @@ exports[`GTF utils test parsing/formating a gtf feature 1`] = `
 Object {
   "attributes": Object {
     "gene_id": Array [
-      "EDEN",
+      "\\"EDEN\\"",
     ],
     "gene_name": Array [
-      "EDEN",
+      "\\"EDEN\\"",
     ],
     "transcript_id": Array [
-      "EDEN.3",
+      "\\"EDEN.3\\"",
     ],
   },
   "end": 3902,
@@ -23,3 +23,19 @@ Object {
   "strand": "+",
 }
 `;
+
+exports[`GTF utils test parsing/formatting items and attributes 1`] = `
+Object {
+  "gene_id": Array [
+    "\\"EDEN\\"",
+  ],
+  "gene_name": Array [
+    "\\"EDEN\\"",
+  ],
+  "transcript_id": Array [
+    "\\"EDEN.3\\"",
+  ],
+}
+`;
+
+exports[`GTF utils test parsing/formatting items and attributes 2`] = `"transcript_id EDEN.3; gene_id EDEN; gene_name EDEN;"`;

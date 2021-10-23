@@ -4,7 +4,8 @@ const {
   parseAttributes,
   parseFeature,
   parseDirective,
-  formatFeature,
+  formatItem,
+  formatAttributes,
   escapeColumn,
 } = gtf.util
 
@@ -12,43 +13,51 @@ describe('GTF utils', () => {
   it('can escape/unescape properly', () => {
     expect(gtf.util.escape(5)).toEqual('5')
     expect(gtf.util.unescape(' ')).toEqual(' ')
-    expect(gtf.util.unescape(5)).toEqual('5')
     expect(escapeColumn('Noggin,+-%Foo\tbar')).toEqual('Noggin,+-%25Foo%09bar')
-  })
-  it('test parsing the attributes of a gtf line', () => {
-    const testAttributes = parseAttributes(
-      'transcript_id "EDEN.3"; gene_id "EDEN"; gene_name "EDEN";',
-    )
-    // eslint-disable-next-line camelcase
-    const { gene_id, transcript_id } = testAttributes
-    expect(gene_id[0]).toBe('EDEN')
-    expect(transcript_id[0]).toBe('EDEN.3')
   })
   it('test parsing/formating a gtf feature', () => {
     const featureLine =
       'ctgA	example	CDS	3301	3902	.	+	0	transcript_id "EDEN.3"; gene_id "EDEN"; gene_name "EDEN";'
-    const testFeature = parseFeature(featureLine)
-    expect(testFeature).toMatchSnapshot()
-    const featureToFormat = {
-      seq_name: 'ctgA',
-      source: 'example',
-      featureType: 'CDS',
-      start: 3301,
-      end: 3902,
-      score: null,
-      strand: '+',
-      frame: 0,
-      attributes: {
-        transcript_id: 'EDEN.3',
-        gene_id: 'EDEN',
-        gene_name: 'EDEN',
-      },
-    }
-    const formattedFeature = formatFeature(featureToFormat)
-    expect(formattedFeature.trim()).toBe(featureLine.replace(/["]+/g, ''))
+    const parsedFeature = parseFeature(featureLine)
+    expect(parsedFeature).toMatchSnapshot()
   })
-  it('test parsing a gtf directive', () => {
-    const testDirective = parseDirective('#!genome-build GRCh38.p7')
-    expect(testDirective.directive).toBe('!genome-build')
+  it('test parsing/formatting items and attributes', () => {
+    const gtfComment = {
+      comment: 'hi this is a comment',
+    }
+    const gtfDirective = {
+      directive: 'gff-version',
+      value: '2',
+    }
+    const gtfSequence = {
+      id: 'ctgA',
+      description: 'test contig',
+      sequence: 'ACTGACTAGCTAGCATCAGCGTCGTAGCTATTATATTACGGTAGCCA',
+    }
+    const gtfAttributes = {
+      transcript_id: ['EDEN.3'],
+      gene_id: ['EDEN'],
+      gene_name: ['EDEN'],
+    }
+    expect(formatItem(gtfComment)).toBe('# hi this is a comment\n')
+    expect(formatItem(gtfDirective)).toBe('##gff-version 2\n')
+    expect(formatItem(gtfSequence)).toBe(
+      '>ctgA test contig\nACTGACTAGCTAGCATCAGCGTCGTAGCTATTATATTACGGTAGCCA\n',
+    )
+    expect(formatItem([gtfDirective, gtfSequence, gtfComment])).toEqual([
+      '##gff-version 2\n',
+      '>ctgA test contig\nACTGACTAGCTAGCATCAGCGTCGTAGCTATTATATTACGGTAGCCA\n',
+      '# hi this is a comment\n',
+    ])
+    const parsedGTFDirective = parseDirective('#!genome-build GRCh38.p7')
+    expect(parsedGTFDirective).toEqual({
+      directive: '!genome-build',
+      value: 'GRCh38.p7',
+    })
+    const parsedGTFAttributes = parseAttributes(
+      'transcript_id "EDEN.3"; gene_id "EDEN"; gene_name "EDEN";',
+    )
+    expect(parsedGTFAttributes).toMatchSnapshot()
+    expect(formatAttributes(gtfAttributes)).toMatchSnapshot()
   })
 })
