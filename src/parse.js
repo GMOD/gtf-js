@@ -1,4 +1,4 @@
-import * as GFF3 from './util'
+import * as GTF from './util'
 
 const containerAttributes = {
   Parent: 'child_features',
@@ -94,13 +94,14 @@ export default class Parser {
     const match = /^\s*(#+)(.*)/.exec(line)
     if (match) {
       // directive or comment
+      // eslint-disable-next-line prefer-const
       let [, hashsigns, contents] = match
 
       if (hashsigns.length === 3) {
         // sync directive, all forward-references are resolved.
         this._emitAllUnderConstructionFeatures()
       } else if (hashsigns.length === 2) {
-        const directive = GFF3.parseDirective(line)
+        const directive = GTF.parseDirective(line)
         if (directive.directive === 'FASTA') {
           this._emitAllUnderConstructionFeatures()
           this.eof = true
@@ -200,15 +201,18 @@ export default class Parser {
 
   // do the right thing with a newly-parsed feature line
   _bufferLine(line) {
-    const featureLine = GFF3.parseFeature(line)
+    const featureLine = GTF.parseFeature(line)
     featureLine.child_features = []
     featureLine.derived_features = []
     // featureLine._lineNumber = this.lineNumber //< debugging aid
 
     // NOTE: a feature is an arrayref of one or more feature lines.
-    const ids = featureLine.attributes.ID || []
-    const parents = featureLine.attributes.Parent || []
-    const derives = featureLine.attributes.Derives_from || []
+    // const ids = featureLine.attributes.ID || []
+    const ids = []
+    // const parents = featureLine.attributes.Parent || []
+    const parents = []
+    // const derives = featureLine.attributes.Derives_from || []
+    const derives = []
 
     if (!ids.length && !parents.length && !derives.length) {
       // if it has no IDs and does not refer to anything, we can just
@@ -222,9 +226,13 @@ export default class Parser {
       const existing = this._underConstructionById[id]
       if (existing) {
         // another location of the same feature
-        if (existing[existing.length - 1].type !== featureLine.type) {
+        if (
+          existing[existing.length - 1].featureType !== featureLine.featureType
+        ) {
           this._parseError(
-            `multi-line feature "${id}" has inconsistent types: "${featureLine.type}", "${existing[existing.length - 1].type}"`,
+            `multi-line feature "${id}" has inconsistent feature type: "${
+              featureLine.featureType
+            }", "${existing[existing.length - 1].featureType}"`,
           )
         }
         existing.push(featureLine)
@@ -282,6 +290,7 @@ export default class Parser {
       let subObj = obj[slot1]
       if (!subObj) {
         subObj = {}
+        // eslint-disable-next-line no-param-reassign
         obj[slot1] = subObj
       }
       const returnVal = subObj[slot2] || false

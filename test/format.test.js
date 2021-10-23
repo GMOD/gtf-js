@@ -4,71 +4,63 @@ import tmp from 'tmp-promise'
 import { promisify } from 'es6-promisify'
 import getStream from 'get-stream'
 
-import gff from '../src'
+import gtf from '../src'
 
 const readfile = promisify(fs.readFile)
 const fdatasync = promisify(fs.fdatasync)
 
-describe('GFF3 formatting', () => {
-  ;['spec_eden', 'au9_scaffold_subset', 'hybrid1', 'hybrid2'].forEach(file => {
-    it(`can roundtrip ${file}.gff3 with formatSync`, () => {
-      const inputGFF3 = fs
-        .readFileSync(require.resolve(`./data/${file}.gff3`))
-        .toString('utf8')
+describe('GTF formatting', () => {
+  it(`can roundtrip a gtf file with formatSync`, () => {
+    const inputGTF = fs
+      .readFileSync(require.resolve(`./data/hybrid.gtf`))
+      .toString('utf8')
 
-      const expectedGFF3 = fs
-        .readFileSync(require.resolve(`./data/${file}.reformatted.gff3`))
-        .toString('utf8')
-        .replace(/###\n/g, '') // formatSync does not insert sync marks
+    const expectedGTF = fs
+      .readFileSync(require.resolve(`./data/hybrid.reformatted.gtf`))
+      .toString('utf8')
+      .replace(/###\n/g, '') // formatSync does not insert sync marks
 
-      const items = gff.parseStringSync(inputGFF3, { parseAll: true })
-      const resultGFF3 = gff.formatSync(items)
-      expect(resultGFF3).toEqual(expectedGFF3)
-    })
-
-    it(`can roundtrip ${file}.gff3 with formatStream`, async () => {
-      const expectedGFF3 = (await readfile(
-        require.resolve(`./data/${file}.reformatted.gff3`),
-      )).toString('utf8')
-
-      const resultGFF3 = await getStream(
-        fs
-          .createReadStream(require.resolve(`./data/${file}.gff3`))
-          .pipe(
-            gff.parseStream({
-              parseFeatures: true,
-              parseComments: true,
-              parseDirectives: true,
-            }),
-          )
-          .pipe(gff.formatStream()),
-      )
-      expect(resultGFF3).toEqual(expectedGFF3)
-    })
+    const items = gtf.parseStringSync(inputGTF, { parseAll: true })
+    const resultGTF = gtf.formatSync(items)
+    expect(resultGTF).toEqual(expectedGTF)
   })
-  ;[
-    'spec_eden',
-    'spec_eden.no_version_directive',
-    'au9_scaffold_subset',
-  ].forEach(file => {
-    it(`can roundtrip ${file}.gff3 with formatFile`, async () => {
-      jest.setTimeout(1000)
-      await tmp.withFile(async tmpFile => {
-        const gff3In = fs
-          .createReadStream(require.resolve(`./data/${file}.gff3`))
-          .pipe(gff.parseStream({ parseAll: true }))
 
-        await gff.formatFile(gff3In, tmpFile.path)
-        await fdatasync(tmpFile.fd)
+  it(`can roundtrip  a gtf file with formatStream`, async () => {
+    const expectedGTF = (
+      await readfile(require.resolve(`./data/hybrid.reformatted.gtf`))
+    ).toString('utf8')
 
-        const resultGFF3 = (await readfile(tmpFile.path)).toString('utf8')
+    const resultGTF = await getStream(
+      fs
+        .createReadStream(require.resolve(`./data/hybrid.gtf`))
+        .pipe(
+          gtf.parseStream({
+            parseFeatures: true,
+            parseComments: true,
+            parseDirectives: true,
+          }),
+        )
+        .pipe(gtf.formatStream()),
+    )
+    expect(resultGTF).toEqual(expectedGTF)
+  })
+  it(`can roundtrip gtf with formatFile`, async () => {
+    jest.setTimeout(1000)
+    await tmp.withFile(async tmpFile => {
+      const gtfIn = fs
+        .createReadStream(require.resolve(`./data/demo2.gtf`))
+        .pipe(gtf.parseStream({ parseAll: true }))
 
-        const expectedGFF3 = (await readfile(
-          require.resolve(`./data/${file}.reformatted.gff3`),
-        )).toString('utf8')
+      await gtf.formatFile(gtfIn, tmpFile.path)
+      await fdatasync(tmpFile.fd)
 
-        expect(resultGFF3).toEqual(expectedGFF3)
-      })
+      const resultGTF = (await readfile(tmpFile.path)).toString('utf8')
+
+      const expectedGTF = (
+        await readfile(require.resolve(`./data/demo2.reformatted.gtf`))
+      ).toString('utf8')
+
+      expect(resultGTF).toEqual(expectedGTF)
     })
   })
 })
