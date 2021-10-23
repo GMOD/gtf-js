@@ -1,6 +1,6 @@
 {
   "name": "@gmod/gtf",
-  "version": "0.0.1",
+  "version": ".0.1dev",
   "description": "read and write GTF data as streams",
   "license": "MIT",
   "repository": "teresam856/gtf-js",
