@@ -4,6 +4,7 @@ const containerAttributes = {
   Parent: 'child_features',
   Derives_from: 'derived_features',
 }
+
 // Note this is a reimplementation of https://github.com/GMOD/jbrowse/src/JBrowse/Store/SeqFeature/GTF/Parser.js
 class FASTAParser {
   constructor(seqCallback) {
@@ -131,11 +132,9 @@ export default class Parser {
   _emitItem(i) {
     if (i[0]) {
       this.featureCallback(i)
-    }
-    else if (i.directive) { 
+    } else if (i.directive) {
       this.directiveCallback(i)
-    }
-    else if (i.comment) { 
+    } else if (i.comment) {
       this.commentCallback(i)
     }
   }
