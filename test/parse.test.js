@@ -1,147 +1,75 @@
-// import fs from 'fs'
-// import gtf from '../src'
+import fs from 'fs'
+import gtf from '../src'
 
-// function readAll(filename) {
-//   return new Promise((resolve, reject) => {
-//     const stuff = {
-//       features: [],
-//       comments: [],
-//       directives: [],
-//       sequences: [],
-//       all: [],
-//     }
+// https://github.com/GMOD/GBrowse/blob/116a7dfeb1d8ecd524cdeebdc1c1a760938a2fd0/bin/gtf2gff3.pl
 
-//     // $p->max_lookback(1)
-//     gtf
-//       .parseFile(require.resolve(filename), {
-//         parseFeatures: true,
-//         parseDirectives: true,
-//         parseComments: true,
-//         parseSequences: true,
-//         bufferSize: 10,
-//       })
-//       .on('data', d => {
-//         stuff.all.push(d)
-//         if (d.directive) stuff.directives.push(d)
-//         else if (d.comment) stuff.comments.push(d)
-//         else if (d.sequence) stuff.sequences.push(d)
-//         else stuff.features.push(d)
-//       })
-//       .on('end', () => {
-//         resolve(stuff)
-//       })
-//       .on('error', reject)
-//   })
-// }
+function readAll(filename) {
+  return new Promise((resolve, reject) => {
+    const stuff = {
+      features: [],
+      comments: [],
+      directives: [],
+      sequences: [],
+      all: [],
+    }
+
+    // $p->max_lookback(1)
+    gtf
+      .parseFile(require.resolve(filename), {
+        parseFeatures: true,
+        parseDirectives: true,
+        parseComments: true,
+        parseSequences: true,
+        bufferSize: 10,
+      })
+      .on('data', d => {
+        stuff.all.push(d)
+        if (d.directive) stuff.directives.push(d)
+        else if (d.comment) stuff.comments.push(d)
+        else if (d.sequence) stuff.sequences.push(d)
+        else stuff.features.push(d)
+      })
+      .on('end', () => {
+        resolve(stuff)
+      })
+      .on('error', reject)
+  })
+}
 
 describe('Gtf parser', () => {
   it('can parse volvox.sorted.gtf', async () => {
-    // const stuff = await readAll('./data/volvox.sorted.gtf')
-    // const referenceResult = JSON.parse(
-    //   fs.readFileSync(require.resolve('./data/volvox.sorted.result.json')),
-    // )
-    // expect(stuff.all).toEqual(referenceResult)
-    expect(true).toEqual(true)
+    const stuff = await readAll('./data/volvox.sorted.gtf')
+    const referenceResult = JSON.parse(
+      fs.readFileSync(require.resolve('./data/volvox.sorted.result.json')),
+    )
+    expect(stuff.all).toEqual(referenceResult)
   })
-  // ;[
-  //   [1010, 'demo.gtf'],
-  //   [4, 'demo2.gtf'],
-  //   [51, 'volvox.sorted.gtf'],
-  // ].forEach(([count, filename]) => {
-  //   it(`can cursorily parse ${filename}`, async () => {
-  //     const stuff = await readAll(`./data/${filename}`)
-  //     //     $p->max_lookback(10);
-  //     expect(stuff.all.length).toEqual(count)
-  //   })
-  // })
+  ;[
+    [2, 'demo.gtf'],
+    [6, 'volvox.sorted.gtf'],
+  ].forEach(([count, filename]) => {
+    it(`can cursorily parse ${filename}`, async () => {
+      const stuff = await readAll(`./data/${filename}`)
+      expect(stuff.all.length).toEqual(count)
+    })
+  })
 
-  // it('supports children before parents, and Derives_from', async () => {
-  //   const stuff = await readAll('./data/knownGene_out_of_order.gff3')
-  //   // $p->max_lookback(2);
-  //   const expectedOutput = JSON.parse(
-  //     fs.readFileSync(
-  //       require.resolve('./data/knownGene_out_of_order.result.json'),
-  //     ),
-  //   )
-  //   expect(stuff.all).toEqual(expectedOutput)
-  // })
-
-  // it('can parse the EDEN gene from the gff3 spec', async () => {
-  //   const stuff = await readAll('./data/spec_eden.gff3')
-  //   expect(stuff.all[2]).toHaveLength(1)
-  //   const [eden] = stuff.all[2]
-
-  //   expect(eden.child_features).toHaveLength(4)
-
-  //   expect(eden.child_features[0][0].type).toEqual('TF_binding_site')
-
-  //   // all the rest are mRNAs
-  //   let mrnas = eden.child_features.slice(1, 4)
-  //   expect(mrnas.filter(m => m.length === 1)).toHaveLength(3)
-
-  //   mrnas = mrnas.map(m => {
-  //     expect(m).toHaveLength(1)
-  //     return m[0]
-  //   })
-
-  //   mrnas.forEach(m => {
-  //     expect(m.type).toEqual('mRNA')
-  //   })
-
-  //   // check that all the mRNAs share the last exon
-  //   const lastExon = mrnas[2].child_features[3]
-  //   expect(mrnas[0].child_features).toContain(lastExon)
-  //   expect(mrnas[1].child_features).toContain(lastExon)
-  //   expect(mrnas[2].child_features).toContain(lastExon)
-
-  //   expect(mrnas[0].child_features).toHaveLength(5)
-  //   expect(mrnas[1].child_features).toHaveLength(4)
-  //   expect(mrnas[2].child_features).toHaveLength(6)
-
-  //   const referenceResult = JSON.parse(
-  //     fs.readFileSync(require.resolve('./data/spec_eden.result.json')),
-  //   )
-  //   expect(stuff.all).toEqual(referenceResult)
-  // })
-
-  // it('can parse an excerpt of the refGene gff3', async () => {
-  //   const stuff = await readAll('./data/refGene_excerpt.gff3')
-  //   expect(true).toBeTruthy()
-  //   expect(stuff.all).toHaveLength(2)
-  // })
-
-  // it('can parse an excerpt of the TAIR10 gff3', async () => {
-  //   const stuff = await readAll('./data/tair10.gff3')
-  //   expect(true).toBeTruthy()
-  //   expect(stuff.all).toHaveLength(3)
-  // })
-
-  // check that some files throw a parse error
-  // ;['mm9_sample_ensembl.gff3', 'Saccharomyces_cerevisiae_EF3_e64.gff3'].forEach(
-  //   errorFile => {
-  //     it(`throws an error when parsing ${errorFile}`, async () => {
-  //       await expect(readAll(`./data/${errorFile}`)).rejects.toMatch(
-  //         /inconsistent types/,
-  //       )
-  //     })
-  //   },
-  // )
-
-  // it('can parse a string synchronously', () => {
-  //   const gff3 = fs
-  //     .readFileSync(require.resolve('./data/spec_eden.gff3'))
-  //     .toString('utf8')
-  //   const result = gtf.parseStringSync(gff3, {
-  //     parseFeatures: true,
-  //     parseDirectives: true,
-  //     parseComments: true,
-  //   })
-  //   expect(result).toHaveLength(3)
-  //   const referenceResult = JSON.parse(
-  //     fs.readFileSync(require.resolve('./data/spec_eden.result.json')),
-  //   )
-  //   expect(result).toEqual(referenceResult)
-  // })
+  it('can parse a string synchronously', () => {
+    const gtfString = fs
+      .readFileSync(require.resolve('./data/demo.gtf'))
+      .toString('utf8')
+    const result = gtf.parseStringSync(gtfString, {
+      parseFeatures: true,
+      parseDirectives: true,
+      parseComments: true,
+    })
+    //  ENSVPAG00000000407 and ENSVPAG00000009976
+    expect(result).toHaveLength(2)
+    const referenceResult = JSON.parse(
+      fs.readFileSync(require.resolve('./data/demo.result.json')),
+    )
+    expect(result).toEqual(referenceResult)
+  })
 
   //   it('can parse some whitespace', () => {
   //     const gff3 = `
