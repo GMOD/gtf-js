@@ -48,8 +48,7 @@ describe('GTF utils', () => {
       comment: 'hi this is a comment',
     }
     const gtfDirective = {
-      directive: 'gff-version',
-      value: '2',
+      directive: 'gtf',
     }
     const gtfSequence = {
       id: 'ctgA',
@@ -62,16 +61,16 @@ describe('GTF utils', () => {
       gene_name: ['EDEN'],
     }
     expect(formatItem(gtfComment)).toBe('# hi this is a comment\n')
-    expect(formatItem(gtfDirective)).toBe('##gff-version 2\n')
+    expect(formatItem(gtfDirective)).toBe('##gtf\n')
     expect(formatItem(gtfSequence)).toBe(
       '>ctgA test contig\nACTGACTAGCTAGCATCAGCGTCGTAGCTATTATATTACGGTAGCCA\n',
     )
     expect(formatItem([gtfDirective, gtfSequence, gtfComment])).toEqual([
-      '##gff-version 2\n',
+      '##gtf\n',
       '>ctgA test contig\nACTGACTAGCTAGCATCAGCGTCGTAGCTATTATATTACGGTAGCCA\n',
       '# hi this is a comment\n',
     ])
-    const parsedGTFDirective = parseDirective('#!genome-build GRCh38.p7')
+    const parsedGTFDirective = parseDirective('##!genome-build GRCh38.p7')
     expect(parsedGTFDirective).toEqual({
       directive: '!genome-build',
       value: 'GRCh38.p7',

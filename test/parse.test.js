@@ -71,131 +71,101 @@ describe('Gtf parser', () => {
     expect(result).toEqual(referenceResult)
   })
 
-  //   it('can parse some whitespace', () => {
-  //     const gff3 = `
-  // SL2.40%25ch01	IT%25AG eugene	g%25e;ne	80999140	81004317	.	+	.	 multivalue = val1,val2, val3;testing = blah
-  // `
+  it('can parse another string synchronously', () => {
+    const gtfLine = `ctgA	example	exon	1050	1500	.	+	.	transcript_id "EDEN.1"; gene_id "EDEN"; gene_name "EDEN";
+  `
 
-  //     const result = gtf.parseStringSync(gff3, {
-  //       parseFeatures: true,
-  //       parseDirectives: true,
-  //       parseComments: true,
-  //     })
-  //     expect(result).toHaveLength(1)
-  //     const referenceResult = [
-  //       [
-  //         {
-  //           seq_id: 'SL2.40%ch01',
-  //           source: 'IT%AG eugene',
-  //           type: 'g%e;ne',
-  //           start: 80999140,
-  //           end: 81004317,
-  //           score: null,
-  //           strand: '+',
-  //           phase: null,
-  //           attributes: {
-  //             multivalue: ['val1', 'val2', 'val3'],
-  //             testing: ['blah'],
-  //           },
-  //           child_features: [],
-  //           derived_features: [],
-  //         },
-  //       ],
-  //     ]
+    const result = gtf.parseStringSync(gtfLine, {
+      parseFeatures: true,
+      parseDirectives: true,
+      parseComments: true,
+    })
+    expect(result).toHaveLength(1)
+    const referenceResult = [
+      [
+        {
+          seq_name: 'ctgA',
+          source: 'example',
+          featureType: 'transcript',
+          start: 1050,
+          end: 1500,
+          score: null,
+          strand: '+',
+          frame: null,
+          attributes: {
+            gene_id: ['"EDEN"'],
+            transcript_id: ['"EDEN.1"'],
+            gene_name: ['"EDEN"'],
+          },
+          child_features: [
+            [
+              {
+                seq_name: 'ctgA',
+                source: 'example',
+                featureType: 'exon',
+                start: 1050,
+                end: 1500,
+                score: null,
+                strand: '+',
+                frame: null,
+                attributes: {
+                  gene_id: ['"EDEN"'],
+                  transcript_id: ['"EDEN.1"'],
+                  gene_name: ['"EDEN"'],
+                },
+                child_features: [],
+                derived_features: [],
+              },
+            ],
+          ],
+          derived_features: [],
+        },
+      ],
+    ]
 
-  //     expect(result).toEqual(referenceResult)
-  //   })
-  //   it('can parse another string synchronously', () => {
-  //     const gff3 = `
-  // SL2.40%25ch01	IT%25AG eugene	g%25e;ne	80999140	81004317	.	+	.	Alias=Solyc01g098840;ID=gene:Solyc01g098840.2;Name=Solyc01g098840.2;from_BOGAS=1;length=5178
-  // `
+    expect(result).toEqual(referenceResult)
+    // trying to support the Cufflinks convention of adding a transcript line
+    // can't do a round trip since the output adds transcripts as parent features
+  })
 
-  //     const result = gtf.parseStringSync(gff3, {
-  //       parseFeatures: true,
-  //       parseDirectives: true,
-  //       parseComments: true,
-  //     })
-  //     expect(result).toHaveLength(1)
-  //     const referenceResult = [
-  //       [
-  //         {
-  //           seq_id: 'SL2.40%ch01',
-  //           source: 'IT%AG eugene',
-  //           type: 'g%e;ne',
-  //           start: 80999140,
-  //           end: 81004317,
-  //           score: null,
-  //           strand: '+',
-  //           phase: null,
-  //           attributes: {
-  //             Alias: ['Solyc01g098840'],
-  //             ID: ['gene:Solyc01g098840.2'],
-  //             Name: ['Solyc01g098840.2'],
-  //             from_BOGAS: ['1'],
-  //             length: ['5178'],
-  //           },
-  //           child_features: [],
-  //           derived_features: [],
-  //         },
-  //       ],
-  //     ]
+  it(`can parse FASTA sections in hybrid  file`, async () => {
+    const stuff = await readAll(`./data/hybrid.gtf`)
+    const other = [
+      {
+        id: 'A00469',
+        sequence: 'GATTACAGATTACA',
+      },
+      {
+        id: 'zonker',
+        sequence:
+          'AAAAAACTAGCATGATCGATCGATCGATCGATATTAGCATGCATGCATGATGATGATAGCTATGATCGATCCCCCCCAAAAAACTAGCATGATCGATCGATCGATCGATATTAGCATGCATGCATGATGATGATAGCTATGATCGATCCCCCCC',
+      },
+      {
+        id: 'zeebo',
+        description: 'this is a test description',
+        sequence:
+          'AAAAACTAGTAGCTAGCTAGCTGATCATAGATCGATGCATGGCATACTGACTGATCGACCCCCC',
+      },
+    ]
+    expect(stuff.sequences).toEqual(other)
+  })
 
-  //     expect(result).toEqual(referenceResult)
-  //     expect(`\n${formatFeature(referenceResult[0])}`).toEqual(gff3)
-  //   })
-  //   ;[
-  //     [
-  //       'hybrid1.gff3',
-  //       [
-  //         {
-  //           id: 'A00469',
-  //           sequence: 'GATTACAGATTACA',
-  //         },
-  //         {
-  //           id: 'zonker',
-  //           sequence:
-  //             'AAAAAACTAGCATGATCGATCGATCGATCGATATTAGCATGCATGCATGATGATGATAGCTATGATCGATCCCCCCCAAAAAACTAGCATGATCGATCGATCGATCGATATTAGCATGCATGCATGATGATGATAGCTATGATCGATCCCCCCC',
-  //         },
-  //         {
-  //           id: 'zeebo',
-  //           description: 'this is a test description',
-  //           sequence:
-  //             'AAAAACTAGTAGCTAGCTAGCTGATCATAGATCGATGCATGGCATACTGACTGATCGACCCCCC',
-  //         },
-  //       ],
-  //     ],
-  //     [
-  //       'hybrid2.gff3',
-  //       [
-  //         {
-  //           id: 'A00469',
-  //           sequence: 'GATTACAWATTACABATTACAGATTACA',
-  //         },
-  //       ],
-  //     ],
-  //   ].forEach(([filename, expectedOutput]) => {
-  //     it(`can parse FASTA sections in hybrid ${filename} file`, async () => {
-  //       const stuff = await readAll(`./data/${filename}`)
-  //       expect(stuff.sequences).toEqual(expectedOutput)
-  //     })
-  //   })
+  it('can be written to directly', async () => {
+    const items = await new Promise((resolve, reject) => {
+      const i = []
+      const stream = gtf
+        .parseStream()
+        .on('data', d => i.push(d))
+        .on('end', () => resolve(i))
+        .on('error', reject)
 
-  //   it('can be written to directly', async () => {
-  //     const items = await new Promise((resolve, reject) => {
-  //       const i = []
-  //       const stream = gtf
-  //         .parseStream()
-  //         .on('data', d => i.push(d))
-  //         .on('end', () => resolve(i))
-  //         .on('error', reject)
+      stream.write(
+        `ctgA	example	exon	1050	1500	.	+	.	transcript_id "EDEN.1"; gene_id "EDEN"; gene_name "EDEN";\n`,
+      )
+      stream.end()
+    })
 
-  //       stream.write(
-  //         `SL2.40ch00	ITAG_eugene	gene	16437	18189	.	+	.	Alias=Solyc00g005000;ID=gene:Solyc00g005000.2;Name=Solyc00g005000.2;from_BOGAS=1;length=1753\n`,
-  //       )
-  //       stream.end()
-  //     })
-
-  //     expect(items).toHaveLength(1)
-  //     expect(items[0][0].seq_id).toEqual('SL2.40ch00')
-  //   })
+    expect(items).toHaveLength(1)
+    expect(items[0][0].seq_name).toEqual('ctgA')
+  })
 })
