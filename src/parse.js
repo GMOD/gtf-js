@@ -219,7 +219,9 @@ export default class Parser {
     const ids = isTranscript
       ? featureLine.attributes.transcript_id || []
       : [featureNumber]
-    const parents = isTranscript ? [] : featureLine.attributes.transcript_id
+    const parents = isTranscript
+      ? []
+      : featureLine.attributes.transcript_id || []
     const derives = featureLine.attributes.Derives_from || []
 
     if (!ids.length && !parents.length && !derives.length) {
@@ -236,6 +238,7 @@ export default class Parser {
       return GTF.formatFeature(result)
     }
     // here we just create transcript features with children features and let 'gene_ids' simply be attributes not a feature in themselves
+
     parents.forEach(parent => {
       const underConst = this._underConstructionById[parent]
       if (!underConst) {

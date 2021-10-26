@@ -138,13 +138,13 @@ export function parseFeature(line) {
 }
 
 /**
- * Parse a GFF3 directive/comment line.
+ * Parse a GTF directive/comment line.
  *
  * @param {String} line
  * @returns {Object} the information in the directive
  */
 export function parseDirective(line) {
-  const match = /^\s*#\s*(\S+)\s*(.*)/.exec(line)
+  const match = /^\s*##\s*(\S+)\s*(.*)/.exec(line)
   // const match = /^\s*\#\#\s*(\S+)\s*(.*)/.exec(line)
   if (!match) return null
 
@@ -261,7 +261,7 @@ export function formatFeature(featureOrFeatures) {
 }
 
 /**
- * Format a directive into a line of GFF3.
+ * Format a directive into a line of GTF.
  *
  * @param {Object} directive
  * @returns {String}
@@ -274,7 +274,7 @@ export function formatDirective(directive) {
 }
 
 /**
- * Format a comment into a GFF3 comment.
+ * Format a comment into a GTF comment.
  * Yes I know this is just adding a # and a newline.
  *
  * @param {Object} comment
@@ -298,7 +298,7 @@ export function formatSequence(seq) {
 
 /**
  * Format a directive, comment, or feature,
- * or array of such items, into one or more lines of GFF3.
+ * or array of such items, into one or more lines of GTF.
  *
  * @param {Object|Array} itemOrItems
  */

@@ -169,9 +169,10 @@ export function parseStringSync(str, inputOptions = {}) {
 /**
  * Format an array of GTF items (features,directives,comments) into string of GTF.
  * Does not insert synchronization (###) marks.
+ * Does not insert directive if it's not already there.
  *
  * @param {Array[Object]} items
- * @returns {String} the formatted GFF3
+ * @returns {String} the formatted GTF
  */
 export function formatSync(items) {
   // sort items into seq and other
@@ -204,14 +205,15 @@ class FormattingTransform extends Transform {
 
   _transform(chunk, encoding, callback) {
     // if we have not emitted anything yet, and this first
-    // chunk is not a gff-version directive, emit one
+    // chunk is not a gtf directive, emit one
     let str
     if (
       !this.haveWeEmittedData &&
       this.insertVersionDirective &&
-      (chunk[0] || chunk).directive !== 'gff-version'
-    )
-      this.push('##gff-version 2\n')
+      (chunk[0] || chunk).directive !== 'gtf'
+    ) {
+      this.push('##gtf\n')
+    }
 
     // if it's a sequence chunk coming down, emit a FASTA directive and
     // change to FASTA mode
@@ -265,7 +267,7 @@ export function formatStream(options) {
  * Format a stream of items (of the type produced
  * by this script) into a GTF file and write it to the filesystem.
 
- * Inserts synchronization (###) marks and a ##gff-version
+ * Inserts synchronization (###) marks and a ##gtf
  * directive automatically (if one is not already present).
  *
  * @param {ReadableStream} stream the stream to write to the file
@@ -275,14 +277,14 @@ export function formatStream(options) {
  * @param {Number} options.minSyncLines
  *  minimum number of lines between sync (###) marks. default 100
  * @param {Boolean} options.insertVersionDirective
- *  if the first item in the stream is not a ##gff-version directive, insert one.
- *  default true
+ *  if the first item in the stream is not a ##gtf directive, insert one.
+ *  default false
  * @returns {Promise} promise for the written filename
  */
 export function formatFile(stream, filename, options = {}) {
   const newOptions = Object.assign(
     {
-      insertVersionDirective: true,
+      insertVersionDirective: false,
     },
     options,
   )
