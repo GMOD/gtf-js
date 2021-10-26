@@ -1,0 +1,812 @@
+[
+    [
+        {
+        "seq_name": "ctgA",
+        "source": "example",
+        "featureType": "transcript",
+        "start": 1050,
+        "end": 9000,
+        "score": null,
+        "strand": "+",
+        "frame": null,
+        "attributes": {
+            "transcript_id": [ "\"EDEN.1\"" ],
+            "gene_id": [ "\"EDEN\"" ],
+            "gene_name": [ "\"EDEN\""]
+        },
+        "child_features": [
+          [
+            {
+              "seq_name": "ctgA",
+              "source": "example",
+              "featureType": "exon",
+              "start": 1050,
+              "end": 1500,
+              "score": null,
+              "strand": "+",
+              "frame": null,
+              "attributes": {
+                "transcript_id": [ "\"EDEN.1\"" ],
+                "gene_id": [ "\"EDEN\"" ],
+                "gene_name": [ "\"EDEN\"" ]
+              },
+              "child_features": [],
+              "derived_features": []
+            }
+          ],
+          [
+            {
+                "seq_name": "ctgA",
+                "source": "example",
+                "featureType": "five_prime_UTR",
+                "start": 1050,
+                "end": 1200,
+                "score": null,
+                "strand": "+",
+                "frame": "0",
+                "attributes": {
+                    "transcript_id": [ "\"EDEN.1\"" ],
+                    "gene_id": [ "\"EDEN\"" ],
+                    "gene_name": [ "\"EDEN\"" ]
+                  },
+                "child_features": [],
+                "derived_features": []
+            }
+          ],
+          [
+            {
+                "seq_name": "ctgA",
+                "source": "example",
+                "featureType": "CDS",
+                "start": 1201,
+                "end": 1500,
+                "score": null,
+                "strand": "+",
+                "frame": "0",
+                "attributes": {
+                    "transcript_id": [ "\"EDEN.1\"" ],
+                    "gene_id": [ "\"EDEN\"" ],
+                    "gene_name": [ "\"EDEN\"" ]
+                  },
+                "child_features": [],
+                "derived_features": []
+            }
+          ],
+          [
+            {
+                "seq_name": "ctgA",
+                "source": "example",
+                "featureType": "CDS",
+                "start": 3000,
+                "end": 3902,
+                "score": null,
+                "strand": "+",
+                "frame": "0",
+                "attributes": {
+                    "transcript_id": [ "\"EDEN.1\"" ],
+                    "gene_id": [ "\"EDEN\"" ],
+                    "gene_name": [ "\"EDEN\"" ]
+                },
+                "child_features": [],
+                "derived_features": []
+            }
+          ],
+          [
+            {
+                "seq_name": "ctgA",
+                "source": "example",
+                "featureType": "exon",
+                "start": 3000,
+                "end": 3902,
+                "score": null,
+                "strand": "+",
+                "frame": null,
+                "attributes": {
+                    "transcript_id": [ "\"EDEN.1\"" ],
+                    "gene_id": [ "\"EDEN\"" ],
+                    "gene_name": [ "\"EDEN\"" ]
+                },
+                "child_features": [],
+                "derived_features": []
+            }
+          ],
+          [
+            {
+                "seq_name": "ctgA",
+                "source": "example",
+                "featureType": "CDS",
+                "start": 5000,
+                "end": 5500,
+                "score": null,
+                "strand": "+",
+                "frame": "0",
+                "attributes": {
+                    "transcript_id": [ "\"EDEN.1\"" ],
+                    "gene_id": [ "\"EDEN\"" ],
+                    "gene_name": [ "\"EDEN\"" ]
+                },
+                "child_features": [],
+                "derived_features": []
+            }
+          ],
+          [
+            {
+                "seq_name": "ctgA",
+                "source": "example",
+                "featureType": "exon",
+                "start": 5000,
+                "end": 5500,
+                "score": null,
+                "strand": "+",
+                "frame": null,
+                "attributes": {
+                    "transcript_id": [ "\"EDEN.1\"" ],
+                    "gene_id": [ "\"EDEN\"" ],
+                    "gene_name": [ "\"EDEN\"" ]
+                },
+                "child_features": [],
+                "derived_features": []
+            }
+          ],
+          [
+            {
+                "seq_name": "ctgA",
+                "source": "example",
+                "featureType": "CDS",
+                "start": 7000,
+                "end": 7608,
+                "score": null,
+                "strand": "+",
+                "frame": "0",
+                "attributes": {
+                    "transcript_id": [ "\"EDEN.1\"" ],
+                    "gene_id": [ "\"EDEN\"" ],
+                    "gene_name": [ "\"EDEN\"" ]
+                },
+                "child_features": [],
+                "derived_features": []
+            }
+          ],
+          [
+            {
+                "seq_name": "ctgA",
+                "source": "example",
+                "featureType": "exon",
+                "start": 7000,
+                "end": 9000,
+                "score": null,
+                "strand": "+",
+                "frame": null,
+                "attributes": {
+                    "transcript_id": [ "\"EDEN.1\"" ],
+                    "gene_id": [ "\"EDEN\"" ],
+                    "gene_name": [ "\"EDEN\"" ]
+                },
+                "child_features": [],
+                "derived_features": []
+            }
+          ],
+          [
+            {
+                "seq_name": "ctgA",
+                "source": "example",
+                "featureType": "three_prime_UTR",
+                "start": 7609,
+                "end": 9000,
+                "score": null,
+                "strand": "+",
+                "frame": "0",
+                "attributes": {
+                    "transcript_id": [ "\"EDEN.1\"" ],
+                    "gene_id": [ "\"EDEN\"" ],
+                    "gene_name": [ "\"EDEN\"" ]
+                },
+                "child_features": [],
+                "derived_features": []
+            }
+          ]],
+        "derived_features": []
+        }
+    ],
+    [
+        {
+        "seq_name": "ctgA",
+        "source": "example",
+        "featureType": "transcript",
+        "start": 1050,
+        "end": 9000,
+        "score": null,
+        "strand": "+",
+        "frame": null,
+        "attributes": {
+            "transcript_id": [ "\"EDEN.2\"" ],
+            "gene_id": [ "\"EDEN\"" ],
+            "gene_name": [ "\"EDEN\"" ]
+        },
+        "child_features": [
+          [
+            {
+                "seq_name": "ctgA",
+                "source": "example",
+                "featureType": "exon",
+                "start": 1050,
+                "end": 1500,
+                "score": null,
+                "strand": "+",
+                "frame": null,
+                "attributes": {
+                    "transcript_id": [ "\"EDEN.2\"" ],
+                    "gene_id": [ "\"EDEN\"" ],
+                    "gene_name": [ "\"EDEN\"" ]
+                },
+                "child_features": [],
+                "derived_features": []
+            }
+          ],
+          [
+            {
+                "seq_name": "ctgA",
+                "source": "example",
+                "featureType": "five_prime_UTR",
+                "start": 1050,
+                "end": 1200,
+                "score": null,
+                "strand": "+",
+                "frame": "0",
+                "attributes": {
+                    "transcript_id": [ "\"EDEN.2\"" ],
+                    "gene_id": [ "\"EDEN\"" ],
+                    "gene_name": [ "\"EDEN\"" ]
+                },
+                "child_features": [],
+                "derived_features": []
+            }
+          ],
+          [
+            {
+                "seq_name": "ctgA",
+                "source": "example",
+                "featureType": "CDS",
+                "start": 1201,
+                "end": 1500,
+                "score": null,
+                "strand": "+",
+                "frame": "0",
+                "attributes": {
+                    "transcript_id": [ "\"EDEN.2\"" ],
+                    "gene_id": [ "\"EDEN\"" ],
+                    "gene_name": [ "\"EDEN\"" ]
+                },
+                "child_features": [],
+                "derived_features": []
+            }
+          ],
+          [
+            {
+                "seq_name": "ctgA",
+                "source": "example",
+                "featureType": "CDS",
+                "start": 5000,
+                "end": 5500,
+                "score": null,
+                "strand": "+",
+                "frame": "0",
+                "attributes": {
+                    "transcript_id": [ "\"EDEN.2\"" ],
+                    "gene_id": [ "\"EDEN\"" ],
+                    "gene_name": [ "\"EDEN\"" ]
+                },
+                "child_features": [],
+                "derived_features": []
+            }
+          ],
+          [
+            {
+                "seq_name": "ctgA",
+                "source": "example",
+                "featureType": "exon",
+                "start": 5000,
+                "end": 5500,
+                "score": null,
+                "strand": "+",
+                "frame": null,
+                "attributes": {
+                    "transcript_id": [ "\"EDEN.2\"" ],
+                    "gene_id": [ "\"EDEN\"" ],
+                    "gene_name": [ "\"EDEN\"" ]
+                },
+                "child_features": [],
+                "derived_features": []
+            }
+          ],
+          [
+            {
+                "seq_name": "ctgA",
+                "source": "example",
+                "featureType": "CDS",
+                "start": 7000,
+                "end": 7608,
+                "score": null,
+                "strand": "+",
+                "frame": "0",
+                "attributes": {
+                    "transcript_id": [ "\"EDEN.2\"" ],
+                    "gene_id": [ "\"EDEN\"" ],
+                    "gene_name": [ "\"EDEN\"" ]
+                },
+                "child_features": [],
+                "derived_features": []
+            }
+          ],
+          [
+            {
+                "seq_name": "ctgA",
+                "source": "example",
+                "featureType": "exon",
+                "start": 7000,
+                "end": 9000,
+                "score": null,
+                "strand": "+",
+                "frame": null,
+                "attributes": {
+                    "transcript_id": [ "\"EDEN.2\"" ],
+                    "gene_id": [ "\"EDEN\"" ],
+                    "gene_name": [ "\"EDEN\"" ]
+                },
+                "child_features": [],
+                "derived_features": []
+            }
+          ],
+          [
+            {
+                "seq_name": "ctgA",
+                "source": "example",
+                "featureType": "three_prime_UTR",
+                "start": 7609,
+                "end": 9000,
+                "score": null,
+                "strand": "+",
+                "frame": "0",
+                "attributes": {
+                    "transcript_id": [ "\"EDEN.2\"" ],
+                    "gene_id": [ "\"EDEN\"" ],
+                    "gene_name": [ "\"EDEN\"" ]
+                },
+                "child_features": [],
+                "derived_features": []
+            }
+          ]],
+        "derived_features": []
+        }
+    ],
+    [
+        {
+        "seq_name": "ctgA",
+        "source": "example",
+        "featureType": "transcript",
+        "start": 1300,
+        "end": 9000,
+        "score": null,
+        "strand": "+",
+        "frame": null,
+        "attributes": {
+            "transcript_id": [ "\"EDEN.3\"" ],
+            "gene_id": [ "\"EDEN\"" ],
+            "gene_name": [ "\"EDEN\"" ]
+        },
+        "child_features": [[
+            {
+                "seq_name": "ctgA",
+                "source": "example",
+                "featureType": "exon",
+                "start": 1300,
+                "end": 1500,
+                "score": null,
+                "strand": "+",
+                "frame": null,
+                "attributes": {
+                    "transcript_id": [ "\"EDEN.3\"" ],
+                    "gene_id": [ "\"EDEN\"" ],
+                    "gene_name": [ "\"EDEN\"" ]
+                },
+                "child_features": [],
+                "derived_features": []
+            }
+          ],
+          [
+            {
+                "seq_name": "ctgA",
+                "source": "example",
+                "featureType": "five_prime_UTR",
+                "start": 1300,
+                "end": 1500,
+                "score": null,
+                "strand": "+",
+                "frame": "1",
+                "attributes": {
+                    "transcript_id": [ "\"EDEN.3\"" ],
+                    "gene_id": [ "\"EDEN\"" ],
+                    "gene_name": [ "\"EDEN\"" ]
+                },
+                "child_features": [],
+                "derived_features": []
+            }
+          ],
+          [
+            {
+                "seq_name": "ctgA",
+                "source": "example",
+                "featureType": "exon",
+                "start": 3000,
+                "end": 3902,
+                "score": null,
+                "strand": "+",
+                "frame": null,
+                "attributes": {
+                    "transcript_id": [ "\"EDEN.3\"" ],
+                    "gene_id": [ "\"EDEN\"" ],
+                    "gene_name": [ "\"EDEN\"" ]
+                },
+                "child_features": [],
+                "derived_features": []
+            }
+          ],
+          [
+            {
+                "seq_name": "ctgA",
+                "source": "example",
+                "featureType": "five_prime_UTR",
+                "start": 3000,
+                "end": 3300,
+                "score": null,
+                "strand": "+",
+                "frame": "1",
+                "attributes": {
+                    "transcript_id": [ "\"EDEN.3\"" ],
+                    "gene_id": [ "\"EDEN\"" ],
+                    "gene_name": [ "\"EDEN\"" ]
+                },
+                "child_features": [],
+                "derived_features": []
+            }
+          ],
+          [
+            {
+                "seq_name": "ctgA",
+                "source": "example",
+                "featureType": "CDS",
+                "start": 3301,
+                "end": 3902,
+                "score": null,
+                "strand": "+",
+                "frame": "0",
+                "attributes": {
+                    "transcript_id": [ "\"EDEN.3\"" ],
+                    "gene_id": [ "\"EDEN\"" ],
+                    "gene_name": [ "\"EDEN\"" ]
+                },
+                "child_features": [],
+                "derived_features": []
+            }
+          ],
+          [
+            {
+                "seq_name": "ctgA",
+                "source": "example",
+                "featureType": "CDS",
+                "start": 5000,
+                "end": 5500,
+                "score": null,
+                "strand": "+",
+                "frame": "1",
+                "attributes": {
+                    "transcript_id": [ "\"EDEN.3\"" ],
+                    "gene_id": [ "\"EDEN\"" ],
+                    "gene_name": [ "\"EDEN\"" ]
+                },
+                "child_features": [],
+                "derived_features": []
+            }
+          ],
+          [
+            {
+                "seq_name": "ctgA",
+                "source": "example",
+                "featureType": "exon",
+                "start": 5000,
+                "end": 5500,
+                "score": null,
+                "strand": "+",
+                "frame": null,
+                "attributes": {
+                    "transcript_id": [ "\"EDEN.3\"" ],
+                    "gene_id": [ "\"EDEN\"" ],
+                    "gene_name": [ "\"EDEN\"" ]
+                },
+                "child_features": [],
+                "derived_features": []
+            }
+          ],
+          [
+            {
+                "seq_name": "ctgA",
+                "source": "example",
+                "featureType": "CDS",
+                "start": 7000,
+                "end": 7600,
+                "score": null,
+                "strand": "+",
+                "frame": "1",
+                "attributes": {
+                    "transcript_id": [ "\"EDEN.3\"" ],
+                    "gene_id": [ "\"EDEN\"" ],
+                    "gene_name": [ "\"EDEN\"" ]
+                },
+                "child_features": [],
+                "derived_features": []
+            }
+          ],
+          [
+            {
+                "seq_name": "ctgA",
+                "source": "example",
+                "featureType": "exon",
+                "start": 7000,
+                "end": 9000,
+                "score": null,
+                "strand": "+",
+                "frame": null,
+                "attributes": {
+                    "transcript_id": [ "\"EDEN.3\"" ],
+                    "gene_id": [ "\"EDEN\"" ],
+                    "gene_name": [ "\"EDEN\"" ]
+                },
+                "child_features": [],
+                "derived_features": []
+            }
+          ],
+          [
+            {
+                "seq_name": "ctgA",
+                "source": "example",
+                "featureType": "three_prime_UTR",
+                "start": 7601,
+                "end": 9000,
+                "score": null,
+                "strand": "+",
+                "frame": "1",
+                "attributes": {
+                    "transcript_id": [ "\"EDEN.3\"" ],
+                    "gene_id": [ "\"EDEN\"" ],
+                    "gene_name": [ "\"EDEN\"" ]
+                },
+                "child_features": [],
+                "derived_features": []
+            }
+          ]],
+        "derived_features": []
+        }
+    ],
+    [
+        {
+        "seq_name": "ctgA",
+        "source": "bare_predicted",
+        "featureType": "transcript",
+        "start": 10000,
+        "end": 11500,
+        "score": null,
+        "strand": "+",
+        "frame": "0",
+        "attributes": { "transcript_id": [ "\"Apple1\"" ] },
+        "child_features": [[
+            {
+                "seq_name": "ctgA",
+                "source": "bare_predicted",
+                "featureType": "CDS",
+                "start": 10000,
+                "end": 11500,
+                "score": null,
+                "strand": "+",
+                "frame": "0",
+                "attributes": { "transcript_id": [ "\"Apple1\"" ] },
+                "child_features": [],
+                "derived_features": []
+            }
+          ]],
+        "derived_features": []
+        }
+    ],
+    [
+        {
+        "seq_name": "ctgA",
+        "source": "predicted",
+        "featureType": "transcript",
+        "start": 13500,
+        "end": 17000,
+        "score": null,
+        "strand": "+",
+        "frame": "0",
+        "attributes": { "transcript_id": [ "\"cds-Apple2\"" ] },
+        "child_features": [[
+            {
+                "seq_name": "ctgA",
+                "source": "predicted",
+                "featureType": "CDS",
+                "start": 13500,
+                "end": 13800,
+                "score": null,
+                "strand": "+",
+                "frame": "0",
+                "attributes": { "transcript_id": [ "\"cds-Apple2\"" ] },
+                "child_features": [],
+                "derived_features": []
+            }
+          ],
+          [
+            {
+                "seq_name": "ctgA",
+                "source": "predicted",
+                "featureType": "CDS",
+                "start": 15000,
+                "end": 15500,
+                "score": null,
+                "strand": "+",
+                "frame": "1",
+                "attributes": { "transcript_id": [ "\"cds-Apple2\"" ] },
+                "child_features": [],
+                "derived_features": []
+            }
+          ],
+          [
+            {
+                "seq_name": "ctgA",
+                "source": "predicted",
+                "featureType": "CDS",
+                "start": 16500,
+                "end": 17000,
+                "score": null,
+                "strand": "+",
+                "frame": "2",
+                "attributes": { "transcript_id": [ "\"cds-Apple2\"" ] },
+                "child_features": [],
+                "derived_features": []
+            }
+          ]],
+        "derived_features": []
+        }
+    ],
+    [
+        {
+        "seq_name": "ctgA",
+        "source": "exonerate",
+        "featureType": "transcript",
+        "start": 17400,
+        "end": 23000,
+        "score": null,
+        "strand": "+",
+        "frame": "0",
+        "attributes": { "transcript_id": [ "\"rna-Apple3\"" ] },
+        "child_features": [[
+            {
+                "seq_name": "ctgA",
+                "source": "exonerate",
+                "featureType": "UTR",
+                "start": 17400,
+                "end": 17999,
+                "score": null,
+                "strand": "+",
+                "frame": "0",
+                "attributes": { "transcript_id": [ "\"rna-Apple3\"" ] },
+                "child_features": [],
+                "derived_features": []
+            }
+          ],
+          [
+            {
+                "seq_name": "ctgA",
+                "source": "exonerate",
+                "featureType": "exon",
+                "start": 17400,
+                "end": 18800,
+                "score": null,
+                "strand": "+",
+                "frame": null,
+                "attributes": { "transcript_id": [ "\"rna-Apple3\"" ] },
+                "child_features": [],
+                "derived_features": []
+            }
+          ],
+          [
+            {
+                "seq_name": "ctgA",
+                "source": "exonerate",
+                "featureType": "CDS",
+                "start": 18000,
+                "end": 18800,
+                "score": null,
+                "strand": "+",
+                "frame": "0",
+                "attributes": { "transcript_id": [ "\"rna-Apple3\"" ] },
+                "child_features": [],
+                "derived_features": []
+            }
+          ],
+          [
+            {
+                "seq_name": "ctgA",
+                "source": "exonerate",
+                "featureType": "CDS",
+                "start": 19000,
+                "end": 19500,
+                "score": null,
+                "strand": "+",
+                "frame": "0",
+                "attributes": { "transcript_id": [ "\"rna-Apple3\"" ] },
+                "child_features": [],
+                "derived_features": []
+            }
+          ],
+          [
+            {
+                "seq_name": "ctgA",
+                "source": "exonerate",
+                "featureType": "exon",
+                "start": 19000,
+                "end": 19500,
+                "score": null,
+                "strand": "+",
+                "frame": null,
+                "attributes": { "transcript_id": [ "\"rna-Apple3\"" ] },
+                "child_features": [],
+                "derived_features": []
+            }
+          ],
+          [
+            {
+                "seq_name": "ctgA",
+                "source": "exonerate",
+                "featureType": "CDS",
+                "start": 21000,
+                "end": 21200,
+                "score": null,
+                "strand": "+",
+                "frame": "0",
+                "attributes": { "transcript_id": [ "\"rna-Apple3\"" ] },
+                "child_features": [],
+                "derived_features": []
+            }
+          ],
+          [
+            {
+                "seq_name": "ctgA",
+                "source": "exonerate",
+                "featureType": "exon",
+                "start": 21000,
+                "end": 23000,
+                "score": null,
+                "strand": "+",
+                "frame": null,
+                "attributes": { "transcript_id": [ "\"rna-Apple3\"" ] },
+                "child_features": [],
+                "derived_features": []
+            }
+          ],
+          [
+            {
+                "seq_name": "ctgA",
+                "source": "exonerate",
+                "featureType": "UTR",
+                "start": 21201,
+                "end": 23000,
+                "score": null,
+                "strand": "+",
+                "frame": "0",
+                "attributes": { "transcript_id": [ "\"rna-Apple3\"" ] },
+                "child_features": [],
+                "derived_features": []
+            }
+          ]],
+        "derived_features": []
+        }
+    ]
+]

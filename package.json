@@ -1,6 +1,6 @@
 {
   "name": "@gmod/gtf",
-  "version": "0.0.1",
+  "version": ".0.1dev",
   "description": "read and write GTF data as streams",
   "license": "MIT",
   "repository": "teresam856/gtf-js",
@@ -32,6 +32,7 @@
   ],
   "scripts": {
     "test": "jest",
+    "test-ci": "jest --ci --coverage",
     "coverage": "npm test -- --coverage",
     "lint": "eslint src test",
     "docs": "documentation readme src --section=API",

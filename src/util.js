@@ -28,8 +28,10 @@ const fieldNames = [
  * @returns {String}
  */
 export function unescape(s) {
-  if (s === null) return null
-  return String(s).replace(/%([0-9A-Fa-f]{2})/g, (match, seq) =>
+  if (s === null) {
+    return null
+  }
+  return String(s).replace(/%([0-9A-Fa-f]{2})/g, (_, seq) =>
     String.fromCharCode(parseInt(seq, 16)),
   )
 }
@@ -96,9 +98,13 @@ export function parseAttributes(attrString) {
         attrs[attr[0]] = arec
       }
 
-      // need to remove double quotes
-      arec.push(unescape(attr[1].trim()).replace(/["]+/g, ''))
-      // arec.push(attr[1].trim().replace(/["]+/g, ''))
+      // arec.push(unescape(attr[1].trim()))
+      arec.push(
+        ...attr[1]
+          .split(',')
+          .map(s => s.trim())
+          .map(unescape),
+      )
     })
   return attrs
 }
@@ -132,19 +138,19 @@ export function parseFeature(line) {
 }
 
 /**
- * Parse a GFF3 directive/comment line.
+ * Parse a GTF directive/comment line.
  *
  * @param {String} line
  * @returns {Object} the information in the directive
  */
 export function parseDirective(line) {
-  const match = /^\s*#\s*(\S+)\s*(.*)/.exec(line)
+  const match = /^\s*##\s*(\S+)\s*(.*)/.exec(line)
   // const match = /^\s*\#\#\s*(\S+)\s*(.*)/.exec(line)
   if (!match) return null
 
-  // eslint-disable-next-line prefer-const
-  let [, name, contents] = match
-
+  // let [, name, contents] = match
+  const name = match[1]
+  let contents = match[2]
   const parsed = { directive: name }
   if (contents.length) {
     contents = contents.replace(/\r?\n$/, '')
@@ -153,13 +159,14 @@ export function parseDirective(line) {
 
   // do a little additional parsing for sequence-region and genome-build directives
   if (name === 'sequence-region') {
-    const c = contents.split(/\s+/, 3)
-    // eslint-disable-next-line prefer-destructuring
-    parsed.seq_id = c[0]
-    parsed.start = c[1] && c[1].replace(/\D/g, '')
-    parsed.end = c[2] && c[2].replace(/\D/g, '')
+    const [seqId, contentStart, contentEnd] = contents.split(/\s+/, 3)
+    parsed.seq_id = seqId
+    parsed.start = contentStart && contentStart.replace(/\D/g, '')
+    parsed.end = contentEnd && contentEnd.replace(/\D/g, '')
   } else if (name === 'genome-build') {
-    ;[parsed.source, parsed.buildname] = contents.split(/\s+/, 2)
+    const [source, buildname] = contents.split(/\s+/, 2)
+    parsed.source = source
+    parsed.buildname = buildname
   }
 
   return parsed
@@ -254,7 +261,7 @@ export function formatFeature(featureOrFeatures) {
 }
 
 /**
- * Format a directive into a line of GFF3.
+ * Format a directive into a line of GTF.
  *
  * @param {Object} directive
  * @returns {String}
@@ -267,7 +274,7 @@ export function formatDirective(directive) {
 }
 
 /**
- * Format a comment into a GFF3 comment.
+ * Format a comment into a GTF comment.
  * Yes I know this is just adding a # and a newline.
  *
  * @param {Object} comment
@@ -291,16 +298,24 @@ export function formatSequence(seq) {
 
 /**
  * Format a directive, comment, or feature,
- * or array of such items, into one or more lines of GFF3.
+ * or array of such items, into one or more lines of GTF.
  *
  * @param {Object|Array} itemOrItems
  */
 export function formatItem(itemOrItems) {
   function formatSingleItem(item) {
-    if (item[0] || item.attributes) return formatFeature(item)
-    if (item.directive) return formatDirective(item)
-    if (item.sequence) return formatSequence(item)
-    if (item.comment) return formatComment(item)
+    if (item[0] || item.attributes) {
+      return formatFeature(item)
+    }
+    if (item.directive) {
+      return formatDirective(item)
+    }
+    if (item.sequence) {
+      return formatSequence(item)
+    }
+    if (item.comment) {
+      return formatComment(item)
+    }
     return '# (invalid item found during format)\n'
   }
 
