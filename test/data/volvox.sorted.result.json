@@ -14,7 +14,8 @@
             "gene_id": [ "\"EDEN\"" ],
             "gene_name": [ "\"EDEN\""]
         },
-        "child_features": [[
+        "child_features": [
+          [
             {
               "seq_name": "ctgA",
               "source": "example",
@@ -222,7 +223,8 @@
             "gene_id": [ "\"EDEN\"" ],
             "gene_name": [ "\"EDEN\"" ]
         },
-        "child_features": [[
+        "child_features": [
+          [
             {
                 "seq_name": "ctgA",
                 "source": "example",
@@ -239,8 +241,9 @@
                 },
                 "child_features": [],
                 "derived_features": []
-            }],
-            [
+            }
+          ],
+          [
             {
                 "seq_name": "ctgA",
                 "source": "example",
