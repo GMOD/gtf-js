@@ -87,7 +87,7 @@ ctgA	bare_predicted	CDS	10000	11500	.	+	0	transcript_id "Apple1";
 ```
 Note: that is creates a transcript feature from the transcript id and creates a child CDS feature from the line of GTF shown above.
 
-```json
+```
 [
     [
         {
@@ -121,7 +121,7 @@ Note: that is creates a transcript feature from the transcript id and creates a 
 ]
 ```
 
-### directives
+### directives, comments, sequences
 
 ```js
 parseDirective("##gtf\n")
@@ -129,42 +129,20 @@ parseDirective("##gtf\n")
 {
   "directive": "gtf",
 }
-```
 
-```js
-parseDirective('##sequence-region ctg123 1 1497228\n')
-// returns
-{
-  "directive": "sequence-region",
-  "value": "ctg123 1 1497228",
-  "seq_id": "ctg123",
-  "start": "1",
-  "end": "1497228"
-}
-```
-
-### comments
-
-```js
 parseComment('# hi this is a comment\n')
 // returns
 {
   "comment": "hi this is a comment"
 }
-```
 
-### sequences
-
-These come from any embedded `##FASTA` section in the GTF file.
-
-```js
+//These come from any embedded `##FASTA` section in the GTF file.
 {
   "id": "ctgA",
   "description": "test contig",
   "sequence": "ACTGACTAGCTAGCATCAGCGTCGTAGCTATTATATTACGGTAGCCA"
 }
 ```
-
 
 ## API
 
@@ -252,7 +230,7 @@ Inserts synchronization (###) marks automatically.
 
 -   `options` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** 
     -   `options.minSyncLines` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** minimum number of lines between ### marks. default 100
-    -   `options.insertVersionDirective` **[Boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** if the first item in the stream is not a ##gtfdirective, insert one.
+    -   `options.insertVersionDirective` **[Boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** 
     default false
 
 ### formatFile
@@ -269,14 +247,14 @@ Inserts synchronization (###) marks.
 -   `options` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)**  (optional, default `{}`)
     -   `options.encoding` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** default 'utf8'. encoding for the written file
     -   `options.minSyncLines` **[Number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** minimum number of lines between sync (###) marks. default 100
-    -   `options.insertVersionDirective` **[Boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** if the first item in the stream is not a ##gtf directive, insert one.
+    -   `options.insertVersionDirective` **[Boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** 
     default false
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)** promise for the written filename
 
 ## util
 
-There is also a `util` module that contains super-low-level functions for dealing with lines and parts of lines.
+There is also a `util` module that contains super-low-level functions for dealing with lines and parts of lines. Note: it will add an additional line of GTF when creating trasncript features with child features.
 
 ```js
 //  with ES6
