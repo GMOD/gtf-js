@@ -85,7 +85,7 @@ Values that are `.` in the GTF are `null` in the output.
 ``` gtf line
 ctgA	bare_predicted	CDS	10000	11500	.	+	0	transcript_id "Apple1";
 ```
-Note: that is creates a transcript feature from the transcript id and creates a child CDS feature from the line of GTF shown above.
+Note: that is creates an additional transcript feature from the transcript id  when featureType is not 'transcript'. It will then create a child CDS feature from the line of GTF shown above.
 
 ```
 [
