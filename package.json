@@ -43,7 +43,7 @@
     "minor": "npm version minor && npm publish",
     "major": "npm version major && npm publish",
     "prepublishOnly": "npm test && npm run build",
-    "postpublish": "git push --follow-tags"
+    "postversion": "git push --follow-tags"
   },
   "watch": {
     "test": "{src,test}/*.js",
