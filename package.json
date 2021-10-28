@@ -1,9 +1,9 @@
 {
   "name": "@gmod/gtf",
-  "version": ".0.1dev",
+  "version": "0.0.1",
   "description": "read and write GTF data as streams",
   "license": "MIT",
-  "repository": "teresam856/gtf-js",
+  "repository": "https://github.com/GMOD/gtf-js",
   "main": "dist/index.js",
   "author": {
     "name": "Robert Buels",
