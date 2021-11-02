@@ -2,8 +2,6 @@
 
 // Forks @gmod/gff-js and adapts it to parse and format GTF.
 
-import typical from 'typical'
-
 const fieldNames = [
   'seq_name',
   'source',
@@ -316,7 +314,7 @@ export function formatItem(itemOrItems) {
     return '# (invalid item found during format)\n'
   }
 
-  if (typical.isArrayLike(itemOrItems)) {
+  if (Array.isArray(itemOrItems)) {
     return itemOrItems.map(item => formatSingleItem(item))
   }
   return formatSingleItem(itemOrItems)
