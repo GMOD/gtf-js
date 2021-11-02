@@ -44,10 +44,7 @@ export function unescape(s) {
  */
 function _escape(regex, s) {
   return String(s).replace(regex, ch => {
-    let hex = ch
-      .charCodeAt(0)
-      .toString(16)
-      .toUpperCase()
+    let hex = ch.charCodeAt(0).toString(16).toUpperCase()
 
     // lol, apparently there's no native function for fixed-width hex output
     if (hex.length < 2) hex = `0${hex}`
@@ -320,7 +317,7 @@ export function formatItem(itemOrItems) {
   }
 
   if (typical.isArrayLike(itemOrItems)) {
-    return Array.map(itemOrItems, formatSingleItem)
+    return itemOrItems.map(item => formatSingleItem(item))
   }
   return formatSingleItem(itemOrItems)
 }
