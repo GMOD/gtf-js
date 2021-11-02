@@ -38,9 +38,7 @@
     "clean": "rimraf dist",
     "prebuild": "npm run clean",
     "build": "babel src bin -d dist",
-    "patch": "npm version patch && npm publish",
-    "minor": "npm version minor && npm publish",
-    "major": "npm version major && npm publish",
+    "preversion": "npm run lint && npm test && npm run build",
     "prepublishOnly": "npm test && npm run build",
     "postversion": "git push --follow-tags"
   },
