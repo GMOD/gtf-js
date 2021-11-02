@@ -51,8 +51,6 @@
   ],
   "dependencies": {
     "@babel/runtime": "^7.0.0",
-    "es6-promisify": "^7.0.0",
-    "tmp-promise": "^3.0.3",
     "typical": "^7.1.1"
   },
   "devDependencies": {
@@ -62,7 +60,9 @@
     "@babel/preset-env": "^7.0.0",
     "babel-eslint": "^10.0.1",
     "babel-jest": "^27.3.1",
+    "tmp-promise": "^3.0.3",
     "documentation": "^9.1.1",
+    "es6-promisify": "^7.0.0",
     "eslint": "^5.12.0",
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-config-prettier": "^4.1.0",
