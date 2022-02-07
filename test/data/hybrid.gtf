@@ -24,15 +24,3 @@ GeneScaffold_10	ensembl	CDS	37995	38136	.	-	2	gene_id "ENSVPAG00000009976"; gene
 GeneScaffold_10	ensembl	exon	37196	37295	.	-	.	gene_id "ENSVPAG00000009976"; gene_version "1"; transcript_id "ENSVPAT00000009977"; transcript_version "1"; exon_number "8"; gene_name "RNPS1"; gene_source "ensembl"; gene_biotype "protein_coding"; transcript_name "RNPS1-201"; transcript_source "ensembl"; transcript_biotype "protein_coding"; exon_id "ENSVPAE00000120021"; exon_version "1";
 GeneScaffold_10	ensembl	CDS	37199	37295	.	-	1	gene_id "ENSVPAG00000009976"; gene_version "1"; transcript_id "ENSVPAT00000009977"; transcript_version "1"; exon_number "8"; gene_name "RNPS1"; gene_source "ensembl"; gene_biotype "protein_coding"; transcript_name "RNPS1-201"; transcript_source "ensembl"; transcript_biotype "protein_coding"; protein_id "ENSVPAP00000009285"; protein_version "1";
 GeneScaffold_10	ensembl	stop_codon	37196	37198	.	-	0	gene_id "ENSVPAG00000009976"; gene_version "1"; transcript_id "ENSVPAT00000009977"; transcript_version "1"; exon_number "8"; gene_name "RNPS1"; gene_source "ensembl"; gene_biotype "protein_coding"; transcript_name "RNPS1-201"; transcript_source "ensembl"; transcript_biotype "protein_coding";
-##FASTA
->A00469
-GATTACA
-GATTACA
->zonker
-AAAAAACTAGCATGATCGATCGATCGATCGATATTAGCATGCATGCATGATGATGATAGCTATGATCGATCCCCCCC
-AAAAAACTAGCATGATCGATCGATCGATCGATATTAGCATGCATGCATGATGATGATAGCTATGATCGATCCCCCCC
-
->zeebo   this is a test description
-AAAAACTAGTAGCTAGCTAGCTGATCATAGATCGATGCATGGCAT
-
-ACTGACTGATCGACCCCCC

@@ -1,3 +1,4 @@
+//@ts-nocheck
 import * as GTF from './util'
 
 const containerAttributes = {

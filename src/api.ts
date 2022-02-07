@@ -1,7 +1,8 @@
+//@ts-nocheck
 import Parser from './parse'
 import { formatItem, formatSequence } from './util'
 
-const { Transform } = require('stream')
+import { Transform } from 'stream'
 const Decoder = require('string_decoder').StringDecoder
 
 // don't load fs native module if running in webpacked code

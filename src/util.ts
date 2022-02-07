@@ -1,3 +1,4 @@
+//@ts-nocheck
 /** @module util */
 
 // Forks @gmod/gff-js and adapts it to parse and format GTF.

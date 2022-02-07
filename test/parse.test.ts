@@ -1,3 +1,4 @@
+//@ts-nocheck
 import fs from 'fs'
 import gtf from '../src'
 
@@ -126,28 +127,6 @@ describe('Gtf parser', () => {
     expect(result).toEqual(referenceResult)
     // trying to support the Cufflinks convention of adding a transcript line
     // can't do a round trip since the output adds transcripts as parent features
-  })
-
-  it(`can parse FASTA sections in hybrid  file`, async () => {
-    const stuff = await readAll(`./data/hybrid.gtf`)
-    const other = [
-      {
-        id: 'A00469',
-        sequence: 'GATTACAGATTACA',
-      },
-      {
-        id: 'zonker',
-        sequence:
-          'AAAAAACTAGCATGATCGATCGATCGATCGATATTAGCATGCATGCATGATGATGATAGCTATGATCGATCCCCCCCAAAAAACTAGCATGATCGATCGATCGATCGATATTAGCATGCATGCATGATGATGATAGCTATGATCGATCCCCCCC',
-      },
-      {
-        id: 'zeebo',
-        description: 'this is a test description',
-        sequence:
-          'AAAAACTAGTAGCTAGCTAGCTGATCATAGATCGATGCATGGCATACTGACTGATCGACCCCCC',
-      },
-    ]
-    expect(stuff.sequences).toEqual(other)
   })
 
   it('can be written to directly', async () => {
