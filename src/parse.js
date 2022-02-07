@@ -228,6 +228,7 @@ export default class Parser {
   }
 
   _resolveReferencesTo(feature, id) {
+    const references = this._underConstructionOrphans[id]
     if (!references) return
 
     Object.keys(references).forEach(attrname => {
