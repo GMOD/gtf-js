@@ -3,7 +3,7 @@ import Parser from './parse'
 import { formatItem, formatSequence } from './util'
 
 import { Transform } from 'stream'
-const Decoder = require('string_decoder').StringDecoder
+import { StringDecoder as Decoder } from 'string_decoder'
 
 // don't load fs native module if running in webpacked code
 // eslint-disable-next-line camelcase
@@ -12,8 +12,11 @@ const fs = typeof __webpack_require__ !== 'function' ? require('fs') : null
 // call a callback on the next process tick if running in
 // an environment that supports it
 function _callback(callback) {
-  if (process && process.nextTick) process.nextTick(callback)
-  else callback()
+  if (process && process.nextTick) {
+    process.nextTick(callback)
+  } else {
+    callback()
+  }
 }
 
 // shared arg processing for the parse routines
@@ -85,8 +88,12 @@ class GTFTransform extends Transform {
   }
 
   _flush(callback) {
-    if (this.decoder.end) this._nextText(this.decoder.end())
-    if (this.textBuffer != null) this._addLine(this.textBuffer)
+    if (this.decoder.end) {
+      this._nextText(this.decoder.end())
+    }
+    if (this.textBuffer != null) {
+      this._addLine(this.textBuffer)
+    }
     this.parser.finish()
     _callback(callback)
   }
@@ -143,7 +150,9 @@ export function parseFile(filename, options) {
  * @returns {Array} array of parsed features, directives, and/or comments
  */
 export function parseStringSync(str, inputOptions = {}) {
-  if (!str) return []
+  if (!str) {
+    return []
+  }
 
   const options = _processParseOptions(inputOptions)
 
@@ -238,7 +247,9 @@ class FormattingTransform extends Transform {
       // count the number of newlines in this chunk
       let count = 0
       for (let i = 0; i < str.length; i += 1) {
-        if (str[i] === '\n') count += 1
+        if (str[i] === '\n') {
+          count += 1
+        }
       }
       this.linesSinceLastSyncMark += count
     }

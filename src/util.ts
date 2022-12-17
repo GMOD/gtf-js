@@ -46,7 +46,9 @@ function _escape(regex, s) {
     let hex = ch.charCodeAt(0).toString(16).toUpperCase()
 
     // lol, apparently there's no native function for fixed-width hex output
-    if (hex.length < 2) hex = `0${hex}`
+    if (hex.length < 2) {
+      hex = `0${hex}`
+    }
     return `%${hex}`
   })
 }
@@ -74,7 +76,9 @@ export function escapeColumn(s) {
  * @returns {Object}
  */
 export function parseAttributes(attrString) {
-  if (!(attrString && attrString.length) || attrString === '.') return {}
+  if (!(attrString && attrString.length) || attrString === '.') {
+    return {}
+  }
 
   const attrs = {}
 
@@ -83,9 +87,13 @@ export function parseAttributes(attrString) {
     .slice(0, -1) // need to remove the last semicolon in the attributes
     .split(';')
     .forEach(attribute => {
-      if (!attribute) return
+      if (!attribute) {
+        return
+      }
       const attr = attribute.trim().split(' ')
-      if (!(attr[1] && attr[1].length)) return
+      if (!(attr[1] && attr[1].length)) {
+        return
+      }
 
       attr[0] = attr[0].trim()
       let arec = attrs[attr[0].trim()]
@@ -126,10 +134,18 @@ export function parseFeature(line) {
   for (let i = 0; i < fieldNames.length; i += 1) {
     parsed[fieldNames[i]] = f[i] === '.' ? null : f[i]
   }
-  if (parsed.start !== null) parsed.start = parseInt(parsed.start, 10)
-  if (parsed.end !== null) parsed.end = parseInt(parsed.end, 10)
-  if (parsed.score !== null) parsed.score = parseFloat(parsed.score, 10)
-  if (parsed.strand != null) parsed.strand = parsed.strand
+  if (parsed.start !== null) {
+    parsed.start = parseInt(parsed.start, 10)
+  }
+  if (parsed.end !== null) {
+    parsed.end = parseInt(parsed.end, 10)
+  }
+  if (parsed.score !== null) {
+    parsed.score = parseFloat(parsed.score, 10)
+  }
+  if (parsed.strand != null) {
+    parsed.strand = parsed.strand
+  }
   return parsed
 }
 
@@ -142,7 +158,9 @@ export function parseFeature(line) {
 export function parseDirective(line) {
   const match = /^\s*##\s*(\S+)\s*(.*)/.exec(line)
   // const match = /^\s*\#\#\s*(\S+)\s*(.*)/.exec(line)
-  if (!match) return null
+  if (!match) {
+    return null
+  }
 
   // let [, name, contents] = match
   const name = match[1]
@@ -264,7 +282,9 @@ export function formatFeature(featureOrFeatures) {
  */
 export function formatDirective(directive) {
   let str = `##${directive.directive}`
-  if (directive.value) str += ` ${directive.value}`
+  if (directive.value) {
+    str += ` ${directive.value}`
+  }
   str += '\n'
   return str
 }

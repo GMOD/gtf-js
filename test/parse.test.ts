@@ -25,10 +25,15 @@ function readAll(filename) {
       })
       .on('data', d => {
         stuff.all.push(d)
-        if (d.directive) stuff.directives.push(d)
-        else if (d.comment) stuff.comments.push(d)
-        else if (d.sequence) stuff.sequences.push(d)
-        else stuff.features.push(d)
+        if (d.directive) {
+          stuff.directives.push(d)
+        } else if (d.comment) {
+          stuff.comments.push(d)
+        } else if (d.sequence) {
+          stuff.sequences.push(d)
+        } else {
+          stuff.features.push(d)
+        }
       })
       .on('end', () => {
         resolve(stuff)

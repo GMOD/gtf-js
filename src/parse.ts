@@ -8,6 +8,7 @@ const containerAttributes = {
 
 export default class Parser {
   constructor(args) {
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     const nullFunc = () => {}
 
     Object.assign(this, {
@@ -116,9 +117,12 @@ export default class Parser {
           delete this._completedReferences[id]
         })
         item.forEach(i => {
-          if (i.child_features) i.child_features.forEach(c => _unbufferItem(c))
-          if (i.derived_features)
+          if (i.child_features) {
+            i.child_features.forEach(c => _unbufferItem(c))
+          }
+          if (i.derived_features) {
             i.derived_features.forEach(d => _unbufferItem(d))
+          }
         })
       }
     }
@@ -230,7 +234,9 @@ export default class Parser {
 
   _resolveReferencesTo(feature, id) {
     const references = this._underConstructionOrphans[id]
-    if (!references) return
+    if (!references) {
+      return
+    }
 
     Object.keys(references).forEach(attrname => {
       const pname = containerAttributes[attrname] || attrname.toLowerCase()
@@ -276,8 +282,9 @@ export default class Parser {
         const otherFeature = this._underConstructionById[toId]
         if (otherFeature) {
           expandFeature(otherFeature, feature)
-          if (!pname)
+          if (!pname) {
             pname = containerAttributes[attrname] || attrname.toLowerCase()
+          }
 
           if (
             !ids.filter(id =>
@@ -289,10 +296,12 @@ export default class Parser {
             })
           }
         } else {
-          if (!this._underConstructionOrphans[toId])
+          if (!this._underConstructionOrphans[toId]) {
             this._underConstructionOrphans[toId] = {}
-          if (!this._underConstructionOrphans[toId][attrname])
+          }
+          if (!this._underConstructionOrphans[toId][attrname]) {
             this._underConstructionOrphans[toId][attrname] = []
+          }
           this._underConstructionOrphans[toId][attrname].push(feature)
         }
       })
