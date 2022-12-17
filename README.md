@@ -1,6 +1,6 @@
 # @gmod/gtf
 
-[![Build Status](https://img.shields.io/github/workflow/status/GMOD/gtf-js/Push/main?logo=github&style=for-the-badge)](https://github.com/GMOD/gtf-js/actions?query=branch%3Amain+workflow%3APush+)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/GMOD/gtf-js/push.yml?branch=main)](https://github.com/GMOD/gtf-js/actions)
 
 GTF or the General Transfer Format is identical to GFF version2. This module was created to read and write GTF data. This module aims to be a complete implementation of the [GTF specification](https://mblab.wustl.edu/GTF22.html).
 
