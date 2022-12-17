@@ -15,6 +15,6 @@ jobs:
       - name: Install deps (with cache)
         uses: bahmutov/npm-install@v1
       - name: Test codebase
-        run: yarn test-ci
+        run: yarn test
       - name: Upload coverage
         run: bash <(curl -s https://codecov.io/bash)

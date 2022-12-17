@@ -2,15 +2,18 @@
 
 [![Build Status](https://img.shields.io/github/actions/workflow/status/GMOD/gtf-js/push.yml?branch=main)](https://github.com/GMOD/gtf-js/actions)
 
-GTF or the General Transfer Format is identical to GFF version2. This module was created to read and write GTF data. This module aims to be a complete implementation of the [GTF specification](https://mblab.wustl.edu/GTF22.html).
+GTF or the General Transfer Format is identical to GFF version2. This module was
+created to read and write GTF data. This module aims to be a complete
+implementation of the [GTF specification](https://mblab.wustl.edu/GTF22.html).
 
 - streaming parsing and streaming formatting
 - creates transcript features with children_features
 - only compatible with GTF
 
-⚠️ WARNING: GTF is a deprecated version of GFF, and it is highly encouraged to use GFF3 if possible. ⚠️
+Note: For JBrowse, we generally encourage GFF3 over GTF
 
-For GFF3, checkout [@gmod/gff-js package found here](https://github.com/GMOD/gff-js)
+For GFF3, checkout
+[@gmod/gff-js package found here](https://github.com/GMOD/gff-js)
 
 ## Install
 
@@ -78,17 +81,19 @@ myStreamOfGTFObjects
 
 ### features
 
-Because GTF can not handle a 3 level hiearchy (gene -> transcript -> exon), we parse GTF by creating transcript features with children
-features.
+Because GTF can not handle a 3 level hiearchy (gene -> transcript -> exon), we
+parse GTF by creating transcript features with children features.
 
-We do not create features from the gene_id.
-Values that are `.` in the GTF are `null` in the output.
+We do not create features from the gene_id. Values that are `.` in the GTF are
+`null` in the output.
 
 ```gtf line
 ctgA	bare_predicted	CDS	10000	11500	.	+	0	transcript_id "Apple1";
 ```
 
-Note: that is creates an additional transcript feature from the transcript id when featureType is not 'transcript'. It will then create a child CDS feature from the line of GTF shown above.
+Note: that is creates an additional transcript feature from the transcript id
+when featureType is not 'transcript'. It will then create a child CDS feature
+from the line of GTF shown above.
 
 ```
 [
@@ -160,19 +165,35 @@ parseComment('# hi this is a comment\n')
 
 ### parseStream
 
-Parse a stream of text data into a stream of feature,
-directive, and comment objects.
+Parse a stream of text data into a stream of feature, directive, and comment
+objects.
 
 **Parameters**
 
-- `options` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** optional options object (optional, default `{}`)
-  - `options.encoding` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** text encoding of the input GTF. default 'utf8'
-  - `options.parseAll` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** default false. if true, will parse all items. overrides other flags
-  - `options.parseFeatures` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** default true
-  - `options.parseDirectives` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** default false
-  - `options.parseComments` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** default false
-  - `options.parseSequences` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** default true
-  - `options.bufferSize` **[Number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** maximum number of GTF lines to buffer. defaults to 1000
+- `options`
+  **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)**
+  optional options object (optional, default `{}`)
+  - `options.encoding`
+    **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+    text encoding of the input GTF. default 'utf8'
+  - `options.parseAll`
+    **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)**
+    default false. if true, will parse all items. overrides other flags
+  - `options.parseFeatures`
+    **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)**
+    default true
+  - `options.parseDirectives`
+    **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)**
+    default false
+  - `options.parseComments`
+    **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)**
+    default false
+  - `options.parseSequences`
+    **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)**
+    default true
+  - `options.bufferSize`
+    **[Number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**
+    maximum number of GTF lines to buffer. defaults to 1000
 
 Returns **ReadableStream** stream (in objectMode) of parsed items
 
@@ -182,34 +203,67 @@ Read and parse a GTF file from the filesystem.
 
 **Parameters**
 
-- `filename` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the filename of the file to parse
-- `options` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** optional options object
-  - `options.encoding` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the file's string encoding, defaults to 'utf8'
-  - `options.parseAll` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** default false. if true, will parse all items. overrides other flags
-  - `options.parseFeatures` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** default true
-  - `options.parseDirectives` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** default false
-  - `options.parseComments` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** default false
-  - `options.parseSequences` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** default true
-  - `options.bufferSize` **[Number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** maximum number of GTF lines to buffer. defaults to 1000
+- `filename`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  the filename of the file to parse
+- `options`
+  **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)**
+  optional options object
+  - `options.encoding`
+    **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+    the file's string encoding, defaults to 'utf8'
+  - `options.parseAll`
+    **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)**
+    default false. if true, will parse all items. overrides other flags
+  - `options.parseFeatures`
+    **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)**
+    default true
+  - `options.parseDirectives`
+    **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)**
+    default false
+  - `options.parseComments`
+    **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)**
+    default false
+  - `options.parseSequences`
+    **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)**
+    default true
+  - `options.bufferSize`
+    **[Number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**
+    maximum number of GTF lines to buffer. defaults to 1000
 
 Returns **ReadableStream** stream (in objectMode) of parsed items
 
 ### parseStringSync
 
-Synchronously parse a string containing GTF and return
-an arrayref of the parsed items.
+Synchronously parse a string containing GTF and return an arrayref of the parsed
+items.
 
 **Parameters**
 
-- `str` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
-- `inputOptions` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** optional options object (optional, default `{}`)
-  - `inputOptions.parseAll` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** default false. if true, will parse all items. overrides other flags
-  - `inputOptions.parseFeatures` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** default true
-  - `inputOptions.parseDirectives` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** default false
-  - `inputOptions.parseComments` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** default false
-  - `inputOptions.parseSequences` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** default true
+- `str`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+- `inputOptions`
+  **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)**
+  optional options object (optional, default `{}`)
+  - `inputOptions.parseAll`
+    **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)**
+    default false. if true, will parse all items. overrides other flags
+  - `inputOptions.parseFeatures`
+    **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)**
+    default true
+  - `inputOptions.parseDirectives`
+    **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)**
+    default false
+  - `inputOptions.parseComments`
+    **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)**
+    default false
+  - `inputOptions.parseSequences`
+    **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)**
+    default true
 
-Returns **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)** array of parsed features, directives, and/or comments
+Returns
+**[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)**
+array of parsed features, directives, and/or comments
 
 ### formatSync
 
@@ -220,44 +274,63 @@ Does not insert synchronization (###) marks.
 
 - `items`
 
-Returns **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the formatted GTF
+Returns
+**[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+the formatted GTF
 
 ### formatStream
 
-Format a stream of items (of the type produced
-by this script) into a stream of GTF text.
+Format a stream of items (of the type produced by this script) into a stream of
+GTF text.
 
 Inserts synchronization (###) marks automatically.
 
 **Parameters**
 
-- `options` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)**
-  - `options.minSyncLines` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** minimum number of lines between ### marks. default 100
-  - `options.insertVersionDirective` **[Boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)**
+- `options`
+  **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)**
+  - `options.minSyncLines`
+    **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)**
+    minimum number of lines between ### marks. default 100
+  - `options.insertVersionDirective`
+    **[Boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)**
     default false
 
 ### formatFile
 
-Format a stream of items (of the type produced
-by this script) into a GTF file and write it to the filesystem.
+Format a stream of items (of the type produced by this script) into a GTF file
+and write it to the filesystem.
 
 Inserts synchronization (###) marks.
 
 **Parameters**
 
 - `stream` **ReadableStream** the stream to write to the file
-- `filename` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the file path to write to
-- `options` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** (optional, default `{}`)
-  - `options.encoding` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** default 'utf8'. encoding for the written file
-  - `options.minSyncLines` **[Number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** minimum number of lines between sync (###) marks. default 100
-  - `options.insertVersionDirective` **[Boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)**
+- `filename`
+  **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  the file path to write to
+- `options`
+  **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)**
+  (optional, default `{}`)
+  - `options.encoding`
+    **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+    default 'utf8'. encoding for the written file
+  - `options.minSyncLines`
+    **[Number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**
+    minimum number of lines between sync (###) marks. default 100
+  - `options.insertVersionDirective`
+    **[Boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)**
     default false
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)** promise for the written filename
+Returns
+**[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)**
+promise for the written filename
 
 ## util
 
-There is also a `util` module that contains super-low-level functions for dealing with lines and parts of lines. Note: it will add an additional line of GTF when creating trasncript features with child features.
+There is also a `util` module that contains super-low-level functions for
+dealing with lines and parts of lines. Note: it will add an additional line of
+GTF when creating trasncript features with child features.
 
 ```js
 //  with ES6
@@ -288,9 +361,11 @@ Unescape a string value used in a GTF attribute.
 
 **Parameters**
 
-- `s` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+- `s`
+  **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
 
-Returns **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+Returns
+**[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
 
 ### escape
 
@@ -298,9 +373,11 @@ Escape a value for use in a GTF attribute value.
 
 **Parameters**
 
-- `s` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+- `s`
+  **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
 
-Returns **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+Returns
+**[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
 
 ### parseAttributes
 
@@ -308,9 +385,11 @@ Parse the 9th column (attributes) of a GTF feature line.
 
 **Parameters**
 
-- `attrString` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+- `attrString`
+  **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
 
-Returns **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)**
+Returns
+**[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)**
 
 ### parseFeature
 
@@ -318,7 +397,8 @@ Parse a GTF feature line
 
 **Parameters**
 
-- `line` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+- `line`
+  **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
 
 ### parseDirective
 
@@ -326,9 +406,12 @@ Parse a GTF directive line.
 
 **Parameters**
 
-- `line` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+- `line`
+  **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
 
-Returns **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** the information in the directive
+Returns
+**[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)**
+the information in the directive
 
 ### formatAttributes
 
@@ -336,12 +419,13 @@ Format an attributes object into a string suitable for the 9th column of GTF.
 
 **Parameters**
 
-- `attrs` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)**
+- `attrs`
+  **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)**
 
 ### formatFeature
 
-Format a feature object or array of
-feature objects into one or more lines of GTF.
+Format a feature object or array of feature objects into one or more lines of
+GTF.
 
 **Parameters**
 
@@ -353,20 +437,24 @@ Format a directive into a line of GTF.
 
 **Parameters**
 
-- `directive` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)**
+- `directive`
+  **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)**
 
-Returns **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+Returns
+**[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
 
 ### formatComment
 
-Format a comment into a GTF comment.
-Yes I know this is just adding a # and a newline.
+Format a comment into a GTF comment. Yes I know this is just adding a # and a
+newline.
 
 **Parameters**
 
-- `comment` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)**
+- `comment`
+  **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)**
 
-Returns **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+Returns
+**[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
 
 ### formatSequence
 
@@ -374,22 +462,29 @@ Format a sequence object as FASTA
 
 **Parameters**
 
-- `seq` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)**
+- `seq`
+  **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)**
 
-Returns **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** formatted single FASTA sequence
+Returns
+**[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+formatted single FASTA sequence
 
 ### formatItem
 
-Format a directive, comment, or feature,
-or array of such items, into one or more lines of GTF.
+Format a directive, comment, or feature, or array of such items, into one or
+more lines of GTF.
 
 **Parameters**
 
-- `itemOrItems` **([Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object) \| [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array))**
+- `itemOrItems`
+  **([Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)
+  \|
+  [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array))**
 
 ## Notes and resources
 
-- This is an adaptation of the [JBrowse GTF parser](https://github.com/GMOD/jbrowse/blob/master/src/JBrowse/Store/SeqFeature/GTF/Parser.js)
+- This is an adaptation of the
+  [JBrowse GTF parser](https://github.com/GMOD/jbrowse/blob/master/src/JBrowse/Store/SeqFeature/GTF/Parser.js)
 - [GTF docs](https://en.wikipedia.org/wiki/General_feature_format)
 
 ## License

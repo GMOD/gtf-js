@@ -1,3 +1,4 @@
+//@ts-nocheck
 import * as GTF from './util'
 
 const containerAttributes = {
@@ -5,35 +6,9 @@ const containerAttributes = {
   Derives_from: 'derived_features',
 }
 
-// Note this is a reimplementation of https://github.com/GMOD/jbrowse/src/JBrowse/Store/SeqFeature/GTF/Parser.js
-class FASTAParser {
-  constructor(seqCallback) {
-    this.seqCallback = seqCallback
-    this.currentSequence = undefined
-  }
-
-  addLine(line) {
-    const defMatch = /^>\s*(\S+)\s*(.*)/.exec(line)
-    if (defMatch) {
-      this._flush()
-      this.currentSequence = { id: defMatch[1], sequence: '' }
-      if (defMatch[2]) this.currentSequence.description = defMatch[2].trim()
-    } else if (this.currentSequence && /\S/.test(line)) {
-      this.currentSequence.sequence += line.replace(/\s/g, '')
-    }
-  }
-
-  _flush() {
-    if (this.currentSequence) this.seqCallback(this.currentSequence)
-  }
-
-  finish() {
-    this._flush()
-  }
-}
-
 export default class Parser {
   constructor(args) {
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     const nullFunc = () => {}
 
     Object.assign(this, {
@@ -65,8 +40,7 @@ export default class Parser {
       _underConstructionOrphans: {},
 
       // if this is true, the parser ignores the
-      // rest of the lines in the file.  currently
-      // set when the file switches over to FASTA
+      // rest of the lines in the file.
       eof: false,
 
       lineNumber: 0,
@@ -74,11 +48,6 @@ export default class Parser {
   }
 
   addLine(line) {
-    // if we have transitioned to a fasta section, just delegate to that parser
-    if (this.fastaParser) {
-      this.fastaParser.addLine(line)
-      return
-    }
     if (this.eof) {
       // otherwise, if we are done, ignore this line
       return
@@ -103,25 +72,14 @@ export default class Parser {
         this._emitAllUnderConstructionFeatures()
       } else if (hashsigns.length === 2) {
         const directive = GTF.parseDirective(line)
-        if (directive.directive === 'FASTA') {
-          this._emitAllUnderConstructionFeatures()
-          this.eof = true
-          this.fastaParser = new FASTAParser(this.sequenceCallback)
-        } else {
-          this._emitItem(directive)
-        }
+
+        this._emitItem(directive)
       } else {
         contents = contents.replace(/\s*/, '')
         this._emitItem({ comment: contents })
       }
     } else if (/^\s*$/.test(line)) {
       // blank line, do nothing
-    } else if (/^\s*>/.test(line)) {
-      // implicit beginning of a FASTA section
-      this._emitAllUnderConstructionFeatures()
-      this.eof = true
-      this.fastaParser = new FASTAParser(this.sequenceCallback)
-      this.fastaParser.addLine(line)
     } else {
       // it's a parse error
       const errLine = line.replace(/\r?\n?$/g, '')
@@ -141,9 +99,6 @@ export default class Parser {
 
   finish() {
     this._emitAllUnderConstructionFeatures()
-    if (this.fastaParser) {
-      this.fastaParser.finish()
-    }
     this.endCallback()
   }
 
@@ -162,9 +117,12 @@ export default class Parser {
           delete this._completedReferences[id]
         })
         item.forEach(i => {
-          if (i.child_features) i.child_features.forEach(c => _unbufferItem(c))
-          if (i.derived_features)
+          if (i.child_features) {
+            i.child_features.forEach(c => _unbufferItem(c))
+          }
+          if (i.derived_features) {
             i.derived_features.forEach(d => _unbufferItem(d))
+          }
         })
       }
     }
@@ -234,10 +192,8 @@ export default class Parser {
     function createTranscript(feature) {
       const result = JSON.parse(JSON.stringify(feature))
       result.featureType = 'transcript'
-      // result.attributes={'transcript_id':result.attributes.transcript_id, 'gene_id':result.attributes.gene_id};
       return GTF.formatFeature(result)
     }
-    // here we just create transcript features with children features and let 'gene_ids' simply be attributes not a feature in themselves
 
     parents.forEach(parent => {
       const underConst = this._underConstructionById[parent]
@@ -278,12 +234,9 @@ export default class Parser {
 
   _resolveReferencesTo(feature, id) {
     const references = this._underConstructionOrphans[id]
-    //   references is of the form
-    //   {
-    //     'Parent' : [ orphans that have a Parent attr referencing this feature ],
-    //     'Derives_from' : [ orphans that have a Derives_from attr referencing this feature ],
-    //    }
-    if (!references) return
+    if (!references) {
+      return
+    }
 
     Object.keys(references).forEach(attrname => {
       const pname = containerAttributes[attrname] || attrname.toLowerCase()
@@ -329,8 +282,9 @@ export default class Parser {
         const otherFeature = this._underConstructionById[toId]
         if (otherFeature) {
           expandFeature(otherFeature, feature)
-          if (!pname)
+          if (!pname) {
             pname = containerAttributes[attrname] || attrname.toLowerCase()
+          }
 
           if (
             !ids.filter(id =>
@@ -342,10 +296,12 @@ export default class Parser {
             })
           }
         } else {
-          if (!this._underConstructionOrphans[toId])
+          if (!this._underConstructionOrphans[toId]) {
             this._underConstructionOrphans[toId] = {}
-          if (!this._underConstructionOrphans[toId][attrname])
+          }
+          if (!this._underConstructionOrphans[toId][attrname]) {
             this._underConstructionOrphans[toId][attrname] = []
+          }
           this._underConstructionOrphans[toId][attrname].push(feature)
         }
       })
