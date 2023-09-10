@@ -81,7 +81,7 @@ myStreamOfGTFObjects
 
 ### features
 
-Because GTF can not handle a 3 level hiearchy (gene -> transcript -> exon), we
+Because GTF can not handle a 3 level hierarchy (gene -> transcript -> exon), we
 parse GTF by creating transcript features with children features.
 
 We do not create features from the gene_id. Values that are `.` in the GTF are

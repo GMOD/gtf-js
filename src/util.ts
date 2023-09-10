@@ -120,7 +120,7 @@ export function parseAttributes(attrString) {
  * returns the parsed line in an object
  */
 export function parseFeature(line) {
-  // assummed that there are no comments at the end of a line
+  // assumed that there are no comments at the end of a line
   // split the line into columns and replace '.' with null in each column
   const f = line.split('\t').map(a => (a === '.' ? null : a))
 
