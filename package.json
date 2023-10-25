@@ -6,6 +6,9 @@
   "repository": "https://github.com/GMOD/gtf-js",
   "main": "dist/index.js",
   "module": "esm/index.js",
+  "browser": {
+    "stream": "stream-browserify"
+  },
   "author": {
     "name": "Robert Buels",
     "email": "rbuels@gmail.com",
@@ -55,6 +58,9 @@
     "gff",
     "genomics"
   ],
+  "dependencies": {
+    "stream-browserify": "^3.0.0"
+  },
   "devDependencies": {
     "@types/jest": "^29.2.4",
     "@types/node": "^18.11.16",
