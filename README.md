@@ -43,7 +43,8 @@ gtf.parseFile('path/to/my/file.gtf', { parseAll: true })
 })
 
 // parse a stream of GTF text
-const fs = require('fs')
+import fs from 'fs'
+
 fs.createReadStream('path/to/my/file.gtf')
 .pipe(gtf.parseStream())
 .on('data', data => {
@@ -61,7 +62,7 @@ let stringOfGTF = fs
 let arrayOfThings = gtf.parseStringSync(stringOfGTF)
 
 // format an array of items to a string
-let stringOfGTF = gtf.formatSync(arrayOfThings)
+let formattedGTF = gtf.formatSync(arrayOfThings)
 
 // format a stream of things to a stream of text.
 // inserts sync marks automatically.

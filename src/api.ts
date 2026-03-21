@@ -1,17 +1,18 @@
-//@ts-nocheck
 import Parser from './parse'
 import { formatItem, formatSequence } from './util'
+import type { GTFItem } from './util'
 
 import { Transform } from 'stream'
 import { StringDecoder as Decoder } from 'string_decoder'
 
 // don't load fs native module if running in webpacked code
 // eslint-disable-next-line camelcase
+declare const __webpack_require__: unknown
 const fs = typeof __webpack_require__ !== 'function' ? require('fs') : null
 
 // call a callback on the next process tick if running in
 // an environment that supports it
-function _callback(callback) {
+function _callback(callback: () => void) {
   if (process && process.nextTick) {
     process.nextTick(callback)
   } else {
@@ -19,8 +20,21 @@ function _callback(callback) {
   }
 }
 
+interface ParseOptions {
+  parseFeatures?: boolean
+  parseDirectives?: boolean
+  parseSequences?: boolean
+  parseComments?: boolean
+  parseAll?: boolean
+  bufferSize?: number
+  encoding?: string
+}
+
 // shared arg processing for the parse routines
-function _processParseOptions(options, additionalDefaults = {}) {
+function _processParseOptions(
+  options: ParseOptions,
+  additionalDefaults: ParseOptions = {},
+) {
   const out = Object.assign(
     {
       parseFeatures: true,
@@ -43,7 +57,13 @@ function _processParseOptions(options, additionalDefaults = {}) {
 }
 
 class GTFTransform extends Transform {
-  constructor(inputOptions = {}) {
+  encoding: string
+  decoder: Decoder
+  textBuffer: string
+  parser: Parser
+  maxLineLength?: number
+
+  constructor(inputOptions: ParseOptions = {}) {
     const options = _processParseOptions(inputOptions)
     super({ objectMode: true })
 
@@ -63,16 +83,16 @@ class GTFTransform extends Transform {
     })
   }
 
-  _addLine(data) {
+  _addLine(data: Buffer | string) {
     const line = data.toString('utf8')
     if (line) {
       this.parser.addLine(line)
     }
   }
 
-  _nextText(buffer) {
+  _nextText(buffer: string) {
     const pieces = (this.textBuffer + buffer).split(/\r?\n/)
-    this.textBuffer = pieces.pop()
+    this.textBuffer = pieces.pop() ?? ''
 
     if (this.maxLineLength && this.textBuffer.length > this.maxLineLength) {
       this.emit('error', new Error('maximum line size exceeded'))
@@ -82,12 +102,12 @@ class GTFTransform extends Transform {
     pieces.forEach(piece => this._addLine(piece))
   }
 
-  _transform(chunk, encoding, callback) {
-    this._nextText(this.decoder.write(chunk))
+  _transform(chunk: Buffer | string, encoding: string, callback: () => void) {
+    this._nextText(this.decoder.write(chunk as Buffer))
     _callback(callback)
   }
 
-  _flush(callback) {
+  _flush(callback: () => void) {
     if (this.decoder.end) {
       this._nextText(this.decoder.end())
     }
@@ -113,7 +133,7 @@ class GTFTransform extends Transform {
  * @param {Number} options.bufferSize maximum number of GTF lines to buffer. defaults to 1000
  * @returns {ReadableStream} stream (in objectMode) of parsed items
  */
-export function parseStream(options = {}) {
+export function parseStream(options: ParseOptions = {}) {
   const newOptions = Object.assign({ bufferSize: 1000 }, options)
   return new GTFTransform(newOptions)
 }
@@ -132,7 +152,7 @@ export function parseStream(options = {}) {
  * @param {Number} options.bufferSize maximum number of GTF lines to buffer. defaults to 1000
  * @returns {ReadableStream} stream (in objectMode) of parsed items
  */
-export function parseFile(filename, options) {
+export function parseFile(filename: string, options: ParseOptions) {
   return fs.createReadStream(filename).pipe(parseStream(options))
 }
 
@@ -149,14 +169,14 @@ export function parseFile(filename, options) {
  * @param {boolean} inputOptions.parseSequences default true
  * @returns {Array} array of parsed features, directives, and/or comments
  */
-export function parseStringSync(str, inputOptions = {}) {
+export function parseStringSync(str: string, inputOptions: ParseOptions = {}) {
   if (!str) {
     return []
   }
 
   const options = _processParseOptions(inputOptions)
 
-  const items = []
+  const items: unknown[] = []
   const push = items.push.bind(items)
 
   const parser = new Parser({
@@ -184,12 +204,12 @@ export function parseStringSync(str, inputOptions = {}) {
  * @param {Array[Object]} items
  * @returns {String} the formatted GTF
  */
-export function formatSync(items) {
+export function formatSync(items: GTFItem[]) {
   // sort items into seq and other
-  const other = []
-  const sequences = []
+  const other: GTFItem[] = []
+  const sequences: GTFItem[] = []
   items.forEach(i => {
-    if (i.sequence) {
+    if ((i as { sequence?: string }).sequence) {
       sequences.push(i)
     } else {
       other.push(i)
@@ -198,13 +218,41 @@ export function formatSync(items) {
   let str = other.map(formatItem).join('')
   if (sequences.length) {
     str += '##FASTA\n'
-    str += sequences.map(formatSequence).join('')
+    str += sequences
+      .map(i => formatSequence(i as Parameters<typeof formatSequence>[0]))
+      .join('')
   }
   return str
 }
 
+type NodeBufferEncoding =
+  | 'ascii'
+  | 'utf8'
+  | 'utf-8'
+  | 'utf16le'
+  | 'ucs2'
+  | 'ucs-2'
+  | 'base64'
+  | 'base64url'
+  | 'latin1'
+  | 'binary'
+  | 'hex'
+
+interface FormattingOptions {
+  minSyncLines?: number
+  insertVersionDirective?: boolean
+  encoding?: NodeBufferEncoding
+  objectMode?: boolean
+}
+
 class FormattingTransform extends Transform {
-  constructor(options = {}) {
+  linesSinceLastSyncMark: number
+  minLinesBetweenSyncMarks: number
+  insertVersionDirective: boolean
+  haveWeEmittedData: boolean
+  fastaMode: boolean
+
+  constructor(options: FormattingOptions = {}) {
     super(Object.assign(options, { objectMode: true }))
     this.linesSinceLastSyncMark = 0
     this.minLinesBetweenSyncMarks = options.minSyncLines || 100
@@ -213,21 +261,26 @@ class FormattingTransform extends Transform {
     this.fastaMode = false
   }
 
-  _transform(chunk, encoding, callback) {
+  _transform(
+    chunk: GTFItem | GTFItem[],
+    encoding: string,
+    callback: () => void,
+  ) {
     // if we have not emitted anything yet, and this first
     // chunk is not a gtf directive, emit one
     let str
     if (
       !this.haveWeEmittedData &&
       this.insertVersionDirective &&
-      (chunk[0] || chunk).directive !== 'gtf'
+      ((chunk as GTFItem[])[0] || (chunk as GTFItem)) &&
+      !((chunk as { directive?: string }).directive === 'gtf')
     ) {
       this.push('##gtf\n')
     }
 
     // if it's a sequence chunk coming down, emit a FASTA directive and
     // change to FASTA mode
-    if (chunk.sequence && !this.fastaMode) {
+    if ((chunk as { sequence?: string }).sequence && !this.fastaMode) {
       this.push('##FASTA\n')
       this.fastaMode = true
     }
@@ -246,8 +299,8 @@ class FormattingTransform extends Transform {
     } else {
       // count the number of newlines in this chunk
       let count = 0
-      for (let i = 0; i < str.length; i += 1) {
-        if (str[i] === '\n') {
+      for (let i = 0; i < (str as string).length; i += 1) {
+        if ((str as string)[i] === '\n') {
           count += 1
         }
       }
@@ -271,7 +324,7 @@ class FormattingTransform extends Transform {
  *  if the first item in the stream is not a ##gff-version directive, insert one to show it's gtf
  *  default false
  */
-export function formatStream(options) {
+export function formatStream(options?: FormattingOptions) {
   return new FormattingTransform(options)
 }
 
@@ -293,7 +346,11 @@ export function formatStream(options) {
  *  default false
  * @returns {Promise} promise for the written filename
  */
-export function formatFile(stream, filename, options = {}) {
+export function formatFile(
+  stream: NodeJS.ReadableStream,
+  filename: string,
+  options: FormattingOptions = {},
+) {
   const newOptions = Object.assign(
     {
       insertVersionDirective: false,

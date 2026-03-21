@@ -1,4 +1,3 @@
-//@ts-nocheck
 /** @module util */
 
 // Forks @gmod/gff-js and adapts it to parse and format GTF.
@@ -15,6 +14,54 @@ const fieldNames = [
   'attributes',
 ]
 
+export interface GTFAttributes {
+  [key: string]: string[]
+}
+
+export interface GTFFeature {
+  seq_name: string | null
+  source: string | null
+  featureType: string | null
+  start: number | null
+  end: number | null
+  score: number | null
+  strand: string | null
+  frame: string | null
+  attributes: GTFAttributes
+  child_features?: GTFFeatureLine[][]
+  derived_features?: GTFFeatureLine[][]
+  [key: string]: unknown
+}
+
+export type GTFFeatureLine = GTFFeature
+
+export interface GTFDirective {
+  directive: string
+  value?: string
+  seq_id?: string
+  start?: string
+  end?: string
+  source?: string
+  buildname?: string
+}
+
+export interface GTFComment {
+  comment: string
+}
+
+export interface GTFSequence {
+  id: string
+  description?: string
+  sequence: string
+}
+
+export type GTFItem =
+  | GTFFeature
+  | GTFFeatureLine[]
+  | GTFDirective
+  | GTFComment
+  | GTFSequence
+
 // TODO: check about enconding/escaping in gtf 9th column
 /**
  * Unescape a string/text value used in a GTF attribute.
@@ -26,7 +73,7 @@ const fieldNames = [
  * @param {String} s
  * @returns {String}
  */
-export function unescape(s) {
+export function unescape(s: string | null) {
   if (s === null) {
     return null
   }
@@ -41,7 +88,7 @@ export function unescape(s) {
  * @param {String} s
  * @returns {String}
  */
-function _escape(regex, s) {
+function _escape(regex: RegExp, s: unknown) {
   return String(s).replace(regex, ch => {
     let hex = ch.charCodeAt(0).toString(16).toUpperCase()
 
@@ -53,7 +100,7 @@ function _escape(regex, s) {
   })
 }
 
-export function escape(s) {
+export function escape(s: unknown) {
   // eslint-disable-next-line no-control-regex
   return _escape(/[\n;\r\t=%&,\x00-\x1f\x7f-\xff]/g, s)
 }
@@ -64,7 +111,7 @@ export function escape(s) {
  * @param {String} s
  * @returns {String}
  */
-export function escapeColumn(s) {
+export function escapeColumn(s: unknown) {
   // eslint-disable-next-line no-control-regex
   return _escape(/[\n\r\t%\x00-\x1f\x7f-\xff]/g, s)
 }
@@ -75,12 +122,12 @@ export function escapeColumn(s) {
  * @param {String} attrString
  * @returns {Object}
  */
-export function parseAttributes(attrString) {
+export function parseAttributes(attrString: string | null): GTFAttributes {
   if (!(attrString && attrString.length) || attrString === '.') {
     return {}
   }
 
-  const attrs = {}
+  const attrs: GTFAttributes = {}
 
   attrString
     .replace(/\r?\n$/, '')
@@ -104,10 +151,10 @@ export function parseAttributes(attrString) {
 
       // arec.push(unescape(attr[1].trim()))
       arec.push(
-        ...attr[1]
+        ...(attr[1]
           .split(',')
           .map(s => s.trim())
-          .map(unescape),
+          .map(unescape) as string[]),
       )
     })
   return attrs
@@ -119,34 +166,31 @@ export function parseAttributes(attrString) {
  * @param {String} line
  * returns the parsed line in an object
  */
-export function parseFeature(line) {
+export function parseFeature(line: string): GTFFeature {
   // assumed that there are no comments at the end of a line
   // split the line into columns and replace '.' with null in each column
-  const f = line.split('\t').map(a => (a === '.' ? null : a))
+  const f: (string | null)[] = line.split('\t').map(a => (a === '.' ? null : a))
 
   // unescape only the seq_name, source, and feature columns
   f[0] = unescape(f[0])
   f[1] = unescape(f[1])
   f[2] = unescape(f[2])
 
-  f[8] = parseAttributes(f[8])
-  const parsed = {}
+  const parsed: Record<string, unknown> = {}
   for (let i = 0; i < fieldNames.length; i += 1) {
     parsed[fieldNames[i]] = f[i] === '.' ? null : f[i]
   }
-  if (parsed.start !== null) {
-    parsed.start = parseInt(parsed.start, 10)
+  parsed['attributes'] = parseAttributes(f[8] as string | null)
+  if (parsed['start'] !== null) {
+    parsed['start'] = parseInt(parsed['start'] as string, 10)
   }
-  if (parsed.end !== null) {
-    parsed.end = parseInt(parsed.end, 10)
+  if (parsed['end'] !== null) {
+    parsed['end'] = parseInt(parsed['end'] as string, 10)
   }
-  if (parsed.score !== null) {
-    parsed.score = parseFloat(parsed.score, 10)
+  if (parsed['score'] !== null) {
+    parsed['score'] = parseFloat(parsed['score'] as string)
   }
-  if (parsed.strand != null) {
-    parsed.strand = parsed.strand
-  }
-  return parsed
+  return parsed as unknown as GTFFeature
 }
 
 /**
@@ -155,7 +199,7 @@ export function parseFeature(line) {
  * @param {String} line
  * @returns {Object} the information in the directive
  */
-export function parseDirective(line) {
+export function parseDirective(line: string): GTFDirective | null {
   const match = /^\s*##\s*(\S+)\s*(.*)/.exec(line)
   // const match = /^\s*\#\#\s*(\S+)\s*(.*)/.exec(line)
   if (!match) {
@@ -165,7 +209,7 @@ export function parseDirective(line) {
   // let [, name, contents] = match
   const name = match[1]
   let contents = match[2]
-  const parsed = { directive: name }
+  const parsed: GTFDirective = { directive: name }
   if (contents.length) {
     contents = contents.replace(/\r?\n$/, '')
     parsed.value = contents
@@ -191,16 +235,22 @@ export function parseDirective(line) {
  *
  * @param {Object} attrs
  */
-export function formatAttributes(attrs) {
-  const attrOrder = []
+export function formatAttributes(attrs: GTFAttributes) {
+  const attrOrder: string[] = []
   Object.keys(attrs).forEach(tag => {
     const val = attrs[tag]
     let valstring
     // eslint-disable-next-line no-prototype-builtins
-    if (val.hasOwnProperty('toString')) {
-      valstring = escape(val.toString())
-    } else if (Array.isArray(val.values)) {
-      valstring = val.values.map(escape).join(',')
+    if (
+      (val as unknown as Record<string, unknown>).hasOwnProperty('toString')
+    ) {
+      valstring = escape((val as unknown as { toString(): string }).toString())
+    } else if (
+      Array.isArray((val as unknown as { values?: unknown[] }).values)
+    ) {
+      valstring = (val as unknown as { values: unknown[] }).values
+        .map(escape)
+        .join(',')
     } else if (Array.isArray(val)) {
       valstring = val.map(escape).join(',')
     } else {
@@ -213,13 +263,16 @@ export function formatAttributes(attrs) {
 
 const translateStrand = ['-', '.', '+']
 
-function _formatSingleFeature(f, seenFeature) {
+function _formatSingleFeature(
+  f: GTFFeature,
+  seenFeature: Record<string, boolean>,
+) {
   const attrString =
     f.attributes === null || f.attributes === undefined
       ? '.'
       : formatAttributes(f.attributes)
 
-  const fields = []
+  const fields: string[] = []
   for (let i = 0; i < 8; i += 1) {
     const val = f[fieldNames[i]]
     // deserialize strand
@@ -227,7 +280,7 @@ function _formatSingleFeature(f, seenFeature) {
       fields[i] =
         val === null || val === undefined
           ? '.'
-          : translateStrand[val + 1] || val
+          : translateStrand[(val as number) + 1] || String(val)
     } else {
       fields[i] =
         val === null || val === undefined ? '.' : escapeColumn(String(val))
@@ -247,7 +300,10 @@ function _formatSingleFeature(f, seenFeature) {
   return formattedString
 }
 
-function _formatFeature(feature, seenFeature) {
+function _formatFeature(
+  feature: GTFFeature | GTFFeature[],
+  seenFeature: Record<string, boolean>,
+): string {
   if (Array.isArray(feature)) {
     return feature.map(f => _formatFeature(f, seenFeature)).join('')
   }
@@ -256,7 +312,9 @@ function _formatFeature(feature, seenFeature) {
   ;['child_features', 'derived_features'].forEach(multiSlot => {
     if (feature[multiSlot]) {
       strings.push(
-        ...feature[multiSlot].map(f => _formatFeature(f, seenFeature)),
+        ...(feature[multiSlot] as GTFFeature[][]).map(f =>
+          _formatFeature(f, seenFeature),
+        ),
       )
     }
   })
@@ -269,8 +327,8 @@ function _formatFeature(feature, seenFeature) {
  *
  * @param {Object|Array[Object]} featureOrFeatures
  */
-export function formatFeature(featureOrFeatures) {
-  const seen = {}
+export function formatFeature(featureOrFeatures: GTFFeature | GTFFeature[]) {
+  const seen: Record<string, boolean> = {}
   return _formatFeature(featureOrFeatures, seen)
 }
 
@@ -280,7 +338,7 @@ export function formatFeature(featureOrFeatures) {
  * @param {Object} directive
  * @returns {String}
  */
-export function formatDirective(directive) {
+export function formatDirective(directive: GTFDirective) {
   let str = `##${directive.directive}`
   if (directive.value) {
     str += ` ${directive.value}`
@@ -296,7 +354,7 @@ export function formatDirective(directive) {
  * @param {Object} comment
  * @returns {String}
  */
-export function formatComment(comment) {
+export function formatComment(comment: GTFComment) {
   return `# ${comment.comment}\n`
 }
 
@@ -306,7 +364,7 @@ export function formatComment(comment) {
  * @param {Object} seq
  * @returns {String} formatted single FASTA sequence
  */
-export function formatSequence(seq) {
+export function formatSequence(seq: GTFSequence) {
   return `>${seq.id}${seq.description ? ` ${seq.description}` : ''}\n${
     seq.sequence
   }\n`
@@ -318,19 +376,21 @@ export function formatSequence(seq) {
  *
  * @param {Object|Array} itemOrItems
  */
-export function formatItem(itemOrItems) {
-  function formatSingleItem(item) {
-    if (item[0] || item.attributes) {
-      return formatFeature(item)
+export function formatItem(itemOrItems: GTFItem | GTFItem[]) {
+  function formatSingleItem(item: GTFItem) {
+    const itemAsArr = item as GTFFeatureLine[]
+    const itemAsFeature = item as GTFFeature
+    if (itemAsArr[0] || itemAsFeature.attributes) {
+      return formatFeature(item as unknown as GTFFeature)
     }
-    if (item.directive) {
-      return formatDirective(item)
+    if ((item as GTFDirective).directive) {
+      return formatDirective(item as GTFDirective)
     }
-    if (item.sequence) {
-      return formatSequence(item)
+    if ((item as GTFSequence).sequence) {
+      return formatSequence(item as GTFSequence)
     }
-    if (item.comment) {
-      return formatComment(item)
+    if ((item as GTFComment).comment) {
+      return formatComment(item as GTFComment)
     }
     return '# (invalid item found during format)\n'
   }

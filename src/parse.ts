@@ -1,13 +1,40 @@
-//@ts-nocheck
 import * as GTF from './util'
+import type { GTFFeature, GTFDirective, GTFComment } from './util'
 
-const containerAttributes = {
+const containerAttributes: Record<string, string> = {
   Parent: 'child_features',
   Derives_from: 'derived_features',
 }
 
+type Callback = (item: unknown) => void
+type ErrorCallback = (msg: string) => void
+
+interface ParserArgs {
+  featureCallback?: Callback | null
+  endCallback?: Callback | null
+  commentCallback?: Callback | null
+  errorCallback?: ErrorCallback | null
+  directiveCallback?: Callback | null
+  sequenceCallback?: Callback | null
+  bufferSize?: number
+}
+
 export default class Parser {
-  constructor(args) {
+  featureCallback!: Callback
+  endCallback!: Callback
+  commentCallback!: Callback
+  errorCallback!: ErrorCallback
+  directiveCallback!: Callback
+  sequenceCallback!: Callback
+  bufferSize!: number
+  _underConstructionTopLevel!: GTFFeature[][]
+  _underConstructionById!: Record<string, GTFFeature[]>
+  _completedReferences!: Record<string, Record<string, boolean>>
+  _underConstructionOrphans!: Record<string, Record<string, GTFFeature[][]>>
+  eof!: boolean
+  lineNumber!: number
+
+  constructor(args: ParserArgs) {
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     const nullFunc = () => {}
 
@@ -47,7 +74,7 @@ export default class Parser {
     })
   }
 
-  addLine(line) {
+  addLine(line: string) {
     if (this.eof) {
       // otherwise, if we are done, ignore this line
       return
@@ -87,23 +114,26 @@ export default class Parser {
     }
   }
 
-  _emitItem(i) {
-    if (i[0]) {
+  _emitItem(i: GTFFeature[] | GTFDirective | GTFComment | null) {
+    if (!i) {
+      return
+    }
+    if ((i as GTFFeature[])[0]) {
       this.featureCallback(i)
-    } else if (i.directive) {
+    } else if ((i as GTFDirective).directive) {
       this.directiveCallback(i)
-    } else if (i.comment) {
+    } else if ((i as GTFComment).comment) {
       this.commentCallback(i)
     }
   }
 
   finish() {
     this._emitAllUnderConstructionFeatures()
-    this.endCallback()
+    this.endCallback(undefined)
   }
 
   _enforceBufferSizeLimit(additionalItemCount = 0) {
-    const _unbufferItem = item => {
+    const _unbufferItem = (item: GTFFeature[] | undefined) => {
       if (
         item &&
         item[0] &&
@@ -118,10 +148,10 @@ export default class Parser {
         })
         item.forEach(i => {
           if (i.child_features) {
-            i.child_features.forEach(c => _unbufferItem(c))
+            i.child_features.forEach(c => _unbufferItem(c as GTFFeature[]))
           }
           if (i.derived_features) {
-            i.derived_features.forEach(d => _unbufferItem(d))
+            i.derived_features.forEach(d => _unbufferItem(d as GTFFeature[]))
           }
         })
       }
@@ -132,7 +162,7 @@ export default class Parser {
       this.bufferSize
     ) {
       const item = this._underConstructionTopLevel.shift()
-      this._emitItem(item)
+      this._emitItem(item ?? null)
       _unbufferItem(item)
     }
   }
@@ -165,7 +195,7 @@ export default class Parser {
   }
 
   // do the right thing with a newly-parsed feature line
-  _bufferLine(line) {
+  _bufferLine(line: string) {
     const featureLine = GTF.parseFeature(line)
     featureLine.child_features = []
     featureLine.derived_features = []
@@ -174,13 +204,13 @@ export default class Parser {
     const featureNumber = this.lineNumber // no such thing as unique ID in GTF. make one up.
     const isTranscript = featureLine.featureType === 'transcript' // trying to support the Cufflinks convention of adding a transcript line
     // NOTE: a feature is an arrayref of one or more feature lines.
-    const ids = isTranscript
+    const ids: (string | number)[] = isTranscript
       ? featureLine.attributes.transcript_id || []
       : [featureNumber]
-    const parents = isTranscript
+    const parents: string[] = isTranscript
       ? []
       : featureLine.attributes.transcript_id || []
-    const derives = featureLine.attributes.Derives_from || []
+    const derives: string[] = featureLine.attributes.Derives_from || []
 
     if (!ids.length && !parents.length && !derives.length) {
       // if it has no IDs and does not refer to anything, we can just
@@ -189,8 +219,8 @@ export default class Parser {
       return
     }
 
-    function createTranscript(feature) {
-      const result = JSON.parse(JSON.stringify(feature))
+    function createTranscript(feature: GTFFeature) {
+      const result = JSON.parse(JSON.stringify(feature)) as GTFFeature
       result.featureType = 'transcript'
       return GTF.formatFeature(result)
     }
@@ -202,9 +232,9 @@ export default class Parser {
       }
     })
 
-    let feature
+    let feature: GTFFeature[] | undefined
     ids.forEach(id => {
-      const existing = this._underConstructionById[id]
+      const existing = this._underConstructionById[String(id)]
       if (existing) {
         existing.push(featureLine)
         feature = existing
@@ -217,10 +247,10 @@ export default class Parser {
         if (!parents.length && !derives.length) {
           this._underConstructionTopLevel.push(feature)
         }
-        this._underConstructionById[id] = feature
+        this._underConstructionById[String(id)] = feature
 
         // see if we have anything buffered that refers to it
-        this._resolveReferencesTo(feature, id)
+        this._resolveReferencesTo(feature, String(id))
       }
     })
 
@@ -228,11 +258,11 @@ export default class Parser {
     this._resolveReferencesFrom(
       feature || [featureLine],
       { Parent: parents, Derives_from: derives },
-      ids,
+      ids.map(String),
     )
   }
 
-  _resolveReferencesTo(feature, id) {
+  _resolveReferencesTo(feature: GTFFeature[], id: string) {
     const references = this._underConstructionOrphans[id]
     if (!references) {
       return
@@ -241,20 +271,31 @@ export default class Parser {
     Object.keys(references).forEach(attrname => {
       const pname = containerAttributes[attrname] || attrname.toLowerCase()
       feature.forEach(loc => {
-        loc[pname].push(...references[attrname])
+        const locFeature = loc as GTFFeature & Record<string, GTFFeature[][]>
+        for (const ref of references[attrname]) {
+          locFeature[pname].push(ref)
+        }
         delete references[attrname]
       })
     })
   }
 
-  _parseError(message) {
+  _parseError(message: string) {
     this.eof = true
     this.errorCallback(`${this.lineNumber}: ${message}`)
   }
 
-  _resolveReferencesFrom(feature, references, ids) {
+  _resolveReferencesFrom(
+    feature: GTFFeature[],
+    references: Record<string, string[]>,
+    ids: string[],
+  ) {
     // this is all a bit more awkward in javascript than it was in perl
-    function postSet(obj, slot1, slot2) {
+    function postSet(
+      obj: Record<string, Record<string, boolean>>,
+      slot1: string,
+      slot2: string,
+    ) {
       let subObj = obj[slot1]
       if (!subObj) {
         subObj = {}
@@ -266,18 +307,24 @@ export default class Parser {
       return returnVal
     }
 
-    function expandFeature(parentFeature, childFeature) {
+    function expandFeature(
+      parentFeature: GTFFeature[],
+      childFeature: GTFFeature[],
+    ) {
       // eslint-disable-next-line no-param-reassign
       parentFeature[0].start = Math.min(
-        parentFeature[0].start,
-        childFeature[0].start,
+        parentFeature[0].start ?? 0,
+        childFeature[0].start ?? 0,
       )
       // eslint-disable-next-line no-param-reassign
-      parentFeature[0].end = Math.max(parentFeature[0].end, childFeature[0].end)
+      parentFeature[0].end = Math.max(
+        parentFeature[0].end ?? 0,
+        childFeature[0].end ?? 0,
+      )
     }
 
     Object.entries(references).forEach(([attrname, toIds]) => {
-      let pname
+      let pname: string | undefined
       toIds.forEach(toId => {
         const otherFeature = this._underConstructionById[toId]
         if (otherFeature) {
@@ -286,13 +333,17 @@ export default class Parser {
             pname = containerAttributes[attrname] || attrname.toLowerCase()
           }
 
+          const resolvedPname = pname
           if (
+            resolvedPname &&
             !ids.filter(id =>
               postSet(this._completedReferences, id, `${attrname},${toId}`),
             ).length
           ) {
             otherFeature.forEach(location => {
-              location[pname].push(feature)
+              const locFeature = location as GTFFeature &
+                Record<string, GTFFeature[][]>
+              locFeature[resolvedPname].push(feature)
             })
           }
         } else {
